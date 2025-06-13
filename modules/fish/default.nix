@@ -21,10 +21,10 @@
       set hydro_multiline true
     '';
     plugins = [
-      {
-        name = "tide";
-        src = pkgs.fishPlugins.tide.src;
-      }
+      # {
+      #   name = "tide";
+      #   src = pkgs.fishPlugins.tide.src;
+      # }
     ];
     shellAliases = {
       # docker
@@ -94,8 +94,8 @@
       # terraform
       tf = "terraform";
 
-      # tmux
-      ta = "tmux new -A -s default";
+      # zellij
+      za = "zellij attach -c default";
 
       freeze = "freeze -c full";
 

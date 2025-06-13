@@ -110,7 +110,7 @@
                   ./modules/go.nix
                   ./modules/rust.nix
                   ./modules/search.nix
-                  ./modules/tmux
+                  # ./modules/tmux
                   ./modules/neovim
                   ./modules/git
                   ./modules/gh
@@ -149,7 +149,7 @@
                   ./modules/search.nix
                   ./modules/ghostty
                   ./modules/rio
-                  ./modules/tmux
+                  # ./modules/tmux
                   ./modules/neovim
                   ./modules/git
                   ./modules/gh
@@ -204,6 +204,7 @@
         {
           default = pkgs.mkShellNoCC {
             buildInputs = with pkgs; [
+              home-manager.packages.${system}.default
               (writeScriptBin "dot-clean" ''
                 nix-collect-garbage -d --delete-older-than 30d
               '')
@@ -225,7 +226,7 @@
                     sudo nixos-rebuild switch --flake .#
                   else
                     # Apply home-manager configuration for non-NixOS systems
-                    home-manager switch --flake .#devag@$(hostname)
+                    home-manager switch --flake .#devag@$(hostname) -b backup
                   fi
                 fi
                 if test $(uname -s) == "Darwin"; then

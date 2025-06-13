@@ -53,6 +53,7 @@
       tree          # Directory tree viewer
       yq-go         # YAML processor
       starship      # Cross-shell prompt
+      zellij        # Terminal multiplexer
       
       # File managers & viewers
       ranger        # Terminal file manager
