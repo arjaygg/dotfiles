@@ -185,6 +185,7 @@
             ./modules/rust.nix
             ./modules/search.nix
             ./modules/tmux
+            ./modules/zellij
             ./modules/neovim
             ./modules/git
             ./modules/gh
@@ -235,6 +236,15 @@
                 fi
               '')
             ];
+
+            shellHook = ''
+              # Ensure a writable runtime dir even under systemd-less WSL
+              if [ ! -w "$XDG_RUNTIME_DIR" ]; then
+                export XDG_RUNTIME_DIR="$HOME/.cache/xdg-runtime"
+                mkdir -p "$XDG_RUNTIME_DIR"
+                chmod 700 "$XDG_RUNTIME_DIR"
+              fi
+            '';
           };
         }
       );

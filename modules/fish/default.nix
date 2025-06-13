@@ -21,10 +21,10 @@
       set hydro_multiline true
     '';
     plugins = [
-      # {
-      #   name = "tide";
-      #   src = pkgs.fishPlugins.tide.src;
-      # }
+      {
+        name = "pure";
+        src = pkgs.fishPlugins.pure.src;
+      }
     ];
     shellAliases = {
       # docker
