@@ -41,6 +41,40 @@
       wget
       yarn
 
+      # Enhanced CLI tools
+      bat           # Better cat with syntax highlighting
+      eza           # Better ls
+      fd            # Better find
+      ripgrep       # Better grep (rg)
+      fzf           # Fuzzy finder
+      lazygit       # Git TUI
+      bottom        # Better htop (btm)
+      neofetch      # System info
+      tree          # Directory tree viewer
+      yq-go         # YAML processor
+      starship      # Cross-shell prompt
+      
+      # File managers & viewers
+      ranger        # Terminal file manager
+      mcfly         # Better history search
+      
+      # Text processing
+      sd            # Better sed
+      
+      # Containers & VMs
+      podman        # Container runtime
+      dive          # Docker image analyzer
+      
+      # Network & API tools
+      httpie        # Better curl
+      dig           # DNS lookup
+      
+      # .NET development
+      dotnet-sdk_8
+      
+      # Python tools
+      poetry
+
       # gke stuff
       (google-cloud-sdk.withExtraComponents [
         google-cloud-sdk.components.gke-gcloud-auth-plugin

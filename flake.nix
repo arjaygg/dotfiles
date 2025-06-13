@@ -168,6 +168,34 @@
         };
       };
 
+      homeConfigurations = {
+        "devag@CKXRCY3" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgsFor.x86_64-linux;
+          modules = [
+            {
+              home.username = "devag";
+              home.homeDirectory = "/home/devag";
+              home.stateVersion = "23.11";
+            }
+            ./modules/shell.nix
+            ./modules/pkgs.nix
+            ./modules/editorconfig.nix
+            ./modules/yamllint.nix
+            ./modules/go.nix
+            ./modules/rust.nix
+            ./modules/search.nix
+            ./modules/tmux
+            ./modules/neovim
+            ./modules/git
+            ./modules/gh
+            ./modules/top
+            ./modules/ssh
+            ./modules/charm.nix
+            nix-index-database.hmModules.nix-index
+          ];
+        };
+      };
+
       devShells = forAllSystems (
         system:
         let
@@ -193,7 +221,12 @@
               '')
               (writeScriptBin "dot-apply" ''
                 if test $(uname -s) == "Linux"; then
-                  sudo nixos-rebuild switch --flake .#
+                  if command -v nixos-rebuild &> /dev/null; then
+                    sudo nixos-rebuild switch --flake .#
+                  else
+                    # Apply home-manager configuration for non-NixOS systems
+                    home-manager switch --flake .#devag@$(hostname)
+                  fi
                 fi
                 if test $(uname -s) == "Darwin"; then
                   nix build "./#darwinConfigurations.$(hostname | cut -f1 -d'.').system"

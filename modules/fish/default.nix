@@ -19,11 +19,17 @@
       set hydro_color_prompt brgreen
       set hydro_color_duration bryellow
       set hydro_multiline true
+      
+      # Install Fisher if not available
+      if not functions -q fisher
+        echo "Installing Fisher plugin manager..."
+        curl -sL https://raw.githubusercontent.com/jorgebucaran/fisher/main/functions/fisher.fish | source && fisher install jorgebucaran/fisher
+      end
     '';
     plugins = [
       {
-        name = "hydro";
-        src = pkgs.fishPlugins.hydro.src;
+        name = "tide";
+        src = pkgs.fishPlugins.tide.src;
       }
     ];
     shellAliases = {
