@@ -169,7 +169,8 @@
       };
 
       homeConfigurations = {
-        "devag@CKXRCY3" = home-manager.lib.homeManagerConfiguration {
+        # Single dynamic configuration that works for any hostname
+        devag = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgsFor.x86_64-linux;
           modules = [
             {
@@ -227,7 +228,7 @@
                     sudo nixos-rebuild switch --flake .#
                   else
                     # Apply home-manager configuration for non-NixOS systems
-                    home-manager switch --flake .#devag@$(hostname) -b backup
+                    home-manager switch --flake .#devag -b backup
                   fi
                 fi
                 if test $(uname -s) == "Darwin"; then
