@@ -15,6 +15,7 @@
       (pkgs.callPackage ../pkgs/bins { })
 
       age
+      claude-code
       comma
       cosign
       curl
