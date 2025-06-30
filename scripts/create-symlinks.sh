@@ -68,7 +68,19 @@ main() {
         case $1 in
             --force|-f) force=true; shift ;;
             --help|-h)
-                echo "Usage: $0 [--force] [--help]"
+                cat << EOF
+Usage: $0 [OPTIONS]
+
+Create and manage dotfiles symlinks
+
+OPTIONS:
+  --force, -f    Force overwrite existing files
+  --help, -h     Show this help message
+
+EXAMPLES:
+  $0             Create symlinks (skip existing)
+  $0 --force     Create symlinks (overwrite existing)
+EOF
                 exit 0 ;;
             *) log_error "Unknown option: $1"; exit 1 ;;
         esac
