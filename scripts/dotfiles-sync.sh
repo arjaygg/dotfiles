@@ -28,12 +28,24 @@ declare -A DOTFILES_MAP=(
     
     # Git configuration
     ["$DOTFILES_ROOT/config/git/gitconfig.template"]="$HOME/.gitconfig"
+    ["$DOTFILES_ROOT/config/git/gitconfig.local"]="$HOME/.gitconfig.local"
     ["$DOTFILES_ROOT/config/git/gitignore_global"]="$HOME/.gitignore_global"
     
-    # Tool configurations
+    # Editor configurations
+    ["$DOTFILES_ROOT/config/nvim"]="$HOME/.config/nvim"
+    
+    # Terminal and shell tools
     ["$DOTFILES_ROOT/config/tmux/tmux.conf"]="$HOME/.tmux.conf"
+    ["$DOTFILES_ROOT/config/starship/starship.toml"]="$HOME/.config/starship.toml"
+    ["$DOTFILES_ROOT/config/atuin/config.toml"]="$HOME/.config/atuin/config.toml"
     ["$DOTFILES_ROOT/system/alacritty/alacritty.yml"]="$HOME/.config/alacritty/alacritty.yml"
     ["$DOTFILES_ROOT/system/i3/i3config"]="$HOME/.config/i3/config"
+    
+    # Tool configurations
+    ["$DOTFILES_ROOT/config/tools/bat.conf"]="$HOME/.config/bat/config"
+    ["$DOTFILES_ROOT/config/tools/fd.ignore"]="$HOME/.config/fd/ignore"
+    ["$DOTFILES_ROOT/config/tools/gh_config.yml"]="$HOME/.config/gh/config.yml"
+    ["$DOTFILES_ROOT/config/ssh/config.template"]="$HOME/.ssh/config.template"
 )
 
 # Check if we're in a git repository

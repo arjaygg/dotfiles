@@ -84,10 +84,30 @@ show_status() {
     
     # Tool status
     echo "🛠️  Tools:"
-    local tools=("git" "fish" "nvim" "tmux" "bat" "eza" "fd" "rg" "fzf" "gh" "lazygit")
+    local tools=("git" "fish" "nvim" "tmux" "bat" "eza" "fd" "rg" "fzf" "gh" "lazygit" "atuin")
     for tool in "${tools[@]}"; do
         if command -v "$tool" >/dev/null 2>&1; then
-            local version=$(command "$tool" --version 2>/dev/null | head -1 | awk '{print $NF}' || echo "unknown")
+            local version="unknown"
+            case "$tool" in
+                tmux)
+                    version=$(tmux -V 2>/dev/null | awk '{print $2}' || echo "unknown")
+                    ;;
+                git)
+                    version=$(git --version 2>/dev/null | awk '{print $3}' || echo "unknown")
+                    ;;
+                nvim)
+                    version=$(nvim --version 2>/dev/null | head -1 | awk '{print $2}' || echo "unknown")
+                    ;;
+                bat|eza|fd|rg|fzf|gh|lazygit|atuin)
+                    version=$(command "$tool" --version 2>/dev/null | head -1 | awk '{print $NF}' || echo "unknown")
+                    ;;
+                fish)
+                    version=$(fish --version 2>/dev/null | awk '{print $3}' || echo "unknown")
+                    ;;
+                *)
+                    version=$(command "$tool" --version 2>/dev/null | head -1 | awk '{print $NF}' || echo "unknown")
+                    ;;
+            esac
             echo "   ✅ $tool ($version)"
         else
             echo "   ❌ $tool (not installed)"

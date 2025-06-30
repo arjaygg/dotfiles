@@ -120,3 +120,8 @@ end
 if command -v direnv >/dev/null 2>&1
     direnv hook fish | source
 end
+
+# Initialize atuin if available
+if command -v atuin >/dev/null 2>&1
+    atuin init fish | source
+end

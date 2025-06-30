@@ -55,6 +55,11 @@ if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init bash)"
 fi
 
+# Initialize atuin if available
+if command -v atuin >/dev/null 2>&1; then
+    eval "$(atuin init bash)"
+fi
+
 # FZF integration
 if command -v fzf >/dev/null 2>&1; then
     # Key bindings
