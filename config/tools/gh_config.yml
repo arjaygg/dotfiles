@@ -1,0 +1,17 @@
+git_protocol: https
+editor: nvim
+prompt: enabled
+pager: delta
+aliases:
+    co: pr checkout
+    pv: pr view
+    pc: pr create
+    pl: pr list
+    pm: pr merge
+    repo-clone: repo clone
+    repo-create: repo create
+    repo-view: repo view
+    issue-create: issue create
+    issue-list: issue list
+    release-list: release list
+version: "1"

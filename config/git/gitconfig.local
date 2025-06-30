@@ -1,0 +1,154 @@
+# Enhanced Git configuration combining template and old dotfiles
+# vi: ft=gitconfig
+
+[alias]
+    # Basic shortcuts from template
+    st = status
+    co = checkout
+    br = branch
+    ci = commit
+    ca = commit -a
+    cm = commit -m
+    cam = commit -am
+    
+    # Enhanced aliases from old dotfiles
+    count = shortlog -sn
+    g = grep --break --heading --line-number
+    gi = grep --break --heading --line-number -i
+    changed = show --pretty="format:" --name-only
+    fm = fetch-merge
+    please = push --force-with-lease
+    commit = commit -s
+    commend = commit -s --amend --no-edit
+    lt = log --tags --decorate --simplify-by-decoration --oneline
+    
+    # Logging (enhanced from template)
+    lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+    ll = log --oneline
+    last = log -1 HEAD
+    
+    # Diff shortcuts
+    d = diff
+    dc = diff --cached
+    ds = diff --stat
+    
+    # Stash shortcuts
+    sl = stash list
+    sa = stash apply
+    ss = stash save
+    sp = stash pop
+    
+    # Branch management
+    unstage = reset HEAD --
+    discard = checkout --
+    uncommit = reset --soft HEAD~1
+    amend = commit --amend
+    
+    # Remote shortcuts
+    pl = pull
+    ps = push
+    psf = push --force-with-lease
+    
+    # Utilities
+    aliases = config --get-regexp alias
+    ignore = "!gi() { curl -sL https://www.toptal.com/developers/gitignore/api/$@ ;}; gi"
+    
+    # Advanced
+    find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
+    show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git show $merge'"
+
+[color]
+    diff = auto
+    status = auto
+    branch = auto
+    ui = true
+
+[color "branch"]
+    current = yellow reverse
+    local = yellow
+    remote = green
+
+[color "diff"]
+    meta = yellow bold
+    frag = magenta bold
+    old = red bold
+    new = green bold
+
+[color "status"]
+    added = yellow
+    changed = green
+    untracked = cyan
+
+[core]
+    excludesfile = ~/.gitignore_global
+    editor = nvim
+    compression = -1
+    autocrlf = input
+    whitespace = trailing-space,space-before-tab
+    precomposeunicode = true
+    pager = delta
+
+[interactive]
+    diffFilter = delta --color-only
+
+[delta]
+    navigate = true    # use n and N to move between diff sections
+    light = false      # set to true if you're in a terminal w/ a light background color
+    side-by-side = true
+    line-numbers = true
+
+[advice]
+    addEmptyPathspec = false
+
+[gpg]
+    program = gpg
+
+[apply]
+    whitespace = nowarn
+
+[help]
+    autocorrect = 1
+
+[diff]
+    tool = nvimdiff
+    conflictstyle = diff3
+    colorMoved = default
+
+[difftool "nvimdiff"]
+    cmd = nvim -d "$LOCAL" "$REMOTE"
+
+[grep]
+    extendRegexp = true
+    lineNumber = true
+
+[push]
+    autoSetupRemote = true
+    default = simple
+
+[submodule]
+    fetchJobs = 4
+
+[commit]
+    gpgsign = false
+
+[tag]
+    gpgsign = false
+
+[log]
+    showSignature = false
+
+[pull]
+    ff = only
+
+[init]
+    defaultBranch = main
+
+[format]
+    signOff = true
+
+[merge]
+    tool = nvimmerge
+    conflictstyle = diff3
+
+[mergetool "nvimmerge"]
+    cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'

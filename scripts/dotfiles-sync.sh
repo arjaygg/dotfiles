@@ -118,7 +118,7 @@ create_symlinks() {
     for source_file in "${!DOTFILES_MAP[@]}"; do
         target_file="${DOTFILES_MAP[$source_file]}"
         
-        if [[ -f "$source_file" ]]; then
+        if [[ -f "$source_file" ]] || [[ -d "$source_file" ]]; then
             # Create target directory if it doesn't exist
             target_dir=$(dirname "$target_file")
             [[ ! -d "$target_dir" ]] && mkdir -p "$target_dir"
