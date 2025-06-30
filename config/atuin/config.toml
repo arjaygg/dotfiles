@@ -124,8 +124,8 @@ common_subcommands = ["ls", "cd", "git", "vim", "cat"]
 
 # Daemon Configuration
 [daemon]
-# Enable the daemon
-enabled = true
+# Disable daemon for now to avoid connection errors
+enabled = false
 
 # Socket path for the daemon
 # socket_path = "~/.atuin.sock"
