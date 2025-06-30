@@ -200,17 +200,42 @@ install_with_brew() {
     if command -v fish >/dev/null 2>&1; then
         log_info "Installing Fisher plugin manager for Fish..."
         fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher" 2>/dev/null || log_warn "Fisher installation failed - can be installed manually later"
+        
+        # Install Fish prompt plugins
+        log_info "Installing Fish prompt plugins (Tide + Hydro)..."
+        fish -c "fisher install IlanCosman/tide@v6" 2>/dev/null || log_warn "Tide installation failed - can be installed manually later"
+        fish -c "fisher install jorgebucaran/hydro" 2>/dev/null || log_warn "Hydro installation failed - can be installed manually later"
     fi
     
     log_success "Homebrew installation completed"
+}
+
+# Clean up broken APT state
+cleanup_apt_state() {
+    log_info "Cleaning up APT package state..."
+    
+    # Fix broken packages
+    sudo apt --fix-broken install -y 2>/dev/null || true
+    
+    # Configure pending packages
+    sudo dpkg --configure -a 2>/dev/null || true
+    
+    # Clean package cache
+    sudo apt clean
+    
+    # Remove unused packages
+    sudo apt autoremove -y 2>/dev/null || true
+    
+    # Update package lists
+    sudo apt update
 }
 
 # Install packages with APT (Ubuntu/Debian)
 install_with_apt() {
     log_info "Installing packages with APT..."
     
-    # Update package list
-    sudo apt update
+    # Clean up any existing issues first
+    cleanup_apt_state
     
     # Essential packages
     log_info "Installing essential packages..."
@@ -218,14 +243,29 @@ install_with_apt() {
     
     # Development packages
     log_info "Installing development packages..."
-    # Remove conflicting nodejs/npm packages first
-    sudo apt remove -y nodejs npm 2>/dev/null || true
     
-    # Install Node.js from NodeSource to avoid conflicts
-    if ! command -v node >/dev/null 2>&1; then
+    # Clean up any broken package state first
+    sudo apt --fix-broken install -y 2>/dev/null || true
+    sudo dpkg --configure -a 2>/dev/null || true
+    
+    # Handle nodejs/npm conflicts
+    if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+        log_info "Setting up Node.js and npm..."
+        
+        # Remove any conflicting packages
+        sudo apt remove -y nodejs npm 2>/dev/null || true
+        sudo apt autoremove -y 2>/dev/null || true
+        
+        # Clean package cache
+        sudo apt clean
+        sudo apt update
+        
+        # Install Node.js from NodeSource
         log_info "Installing Node.js from NodeSource..."
         curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
         sudo apt install -y nodejs
+    else
+        log_info "Node.js and npm already installed"
     fi
     
     sudo apt install -y python3 python3-pip
@@ -342,6 +382,11 @@ install_with_apt() {
     if command -v fish >/dev/null 2>&1; then
         log_info "Installing Fisher plugin manager for Fish..."
         fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher" 2>/dev/null || log_warn "Fisher installation failed - can be installed manually later"
+        
+        # Install Fish prompt plugins
+        log_info "Installing Fish prompt plugins (Tide + Hydro)..."
+        fish -c "fisher install IlanCosman/tide@v6" 2>/dev/null || log_warn "Tide installation failed - can be installed manually later"
+        fish -c "fisher install jorgebucaran/hydro" 2>/dev/null || log_warn "Hydro installation failed - can be installed manually later"
     fi
     
     log_success "APT installation completed"
@@ -377,6 +422,11 @@ install_with_pacman() {
     if command -v fish >/dev/null 2>&1; then
         log_info "Installing Fisher plugin manager for Fish..."
         fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher" 2>/dev/null || log_warn "Fisher installation failed - can be installed manually later"
+        
+        # Install Fish prompt plugins
+        log_info "Installing Fish prompt plugins (Tide + Hydro)..."
+        fish -c "fisher install IlanCosman/tide@v6" 2>/dev/null || log_warn "Tide installation failed - can be installed manually later"
+        fish -c "fisher install jorgebucaran/hydro" 2>/dev/null || log_warn "Hydro installation failed - can be installed manually later"
     fi
     
     log_success "Pacman installation completed"
@@ -526,6 +576,7 @@ check_repo_state() {
 # Main installation function
 main() {
     local method=""
+    local force_reset=false
     
     # Check repository state first
     check_repo_state
@@ -549,12 +600,34 @@ main() {
                 method="generic"
                 shift
                 ;;
+            --force-reset)
+                force_reset=true
+                shift
+                ;;
+            --help)
+                echo "Usage: $0 [OPTIONS]"
+                echo "Options:"
+                echo "  --brew        Use Homebrew (macOS)"
+                echo "  --apt         Use APT (Ubuntu/Debian)"
+                echo "  --pacman      Use Pacman (Arch Linux)"
+                echo "  --generic     Generic installation"
+                echo "  --force-reset Clean up package state before installation"
+                echo "  --help        Show this help"
+                exit 0
+                ;;
             *)
                 log_error "Unknown option: $1"
+                echo "Use --help for usage information"
                 exit 1
                 ;;
         esac
     done
+    
+    # Force cleanup if requested
+    if [[ "$force_reset" == true ]] && [[ "$method" == "apt" || -z "$method" ]] && command -v apt >/dev/null 2>&1; then
+        log_info "Force reset requested - cleaning up package state..."
+        cleanup_apt_state
+    fi
     
     # Auto-detect if no method specified
     if [[ -z "$method" ]]; then

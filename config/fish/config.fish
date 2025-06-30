@@ -110,9 +110,37 @@ set -gx GIT_EDITOR "$EDITOR"
 # GPG configuration
 set -gx GPG_TTY (tty)
 
-# Initialize starship prompt if available
-if command -v starship >/dev/null 2>&1
-    starship init fish | source
+# Prompt configuration - Tide is default, Hydro available as alternative
+# Use 'dotfiles prompt tide' or 'dotfiles prompt hydro' to switch
+set -g DOTFILES_FISH_PROMPT (cat ~/.config/fish/.prompt_choice 2>/dev/null || echo "tide")
+
+switch "$DOTFILES_FISH_PROMPT"
+case "hydro"
+    # Hydro prompt - ultra-fast and minimal
+    if functions -q hydro_prompt
+        # Hydro is already loaded
+    else
+        echo "Hydro prompt not found. Run: fisher install jorgebucaran/hydro"
+    end
+case "tide" 
+    # Tide prompt - feature-rich with async rendering (default)
+    if functions -q tide
+        # Tide is already loaded
+    else
+        echo "Tide prompt not found. Run: fisher install IlanCosman/tide@v6"
+    end
+case "starship"
+    # Fallback to starship if available
+    if command -v starship >/dev/null 2>&1
+        starship init fish | source
+    end
+case "*"
+    # Default to tide
+    if functions -q tide
+        # Tide is loaded
+    else if command -v starship >/dev/null 2>&1
+        starship init fish | source
+    end
 end
 
 # Initialize zoxide if available

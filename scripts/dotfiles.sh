@@ -49,6 +49,7 @@ show_help() {
     echo -e "    ${GREEN}schedule${NC}       Setup automated maintenance"
     echo -e "    ${GREEN}clean${NC}          Clean up old backups and caches"
     echo -e "    ${GREEN}doctor${NC}         Diagnose and fix common issues"
+    echo -e "    ${GREEN}prompt${NC}         Switch Fish shell prompt (tide/hydro/starship)"
     echo
     echo -e "${BOLD}SYNC OPTIONS:${NC}"
     echo "    --force             Force sync even if no changes"
@@ -65,6 +66,8 @@ show_help() {
     echo "    dotfiles install                 # Fresh installation"
     echo "    dotfiles health                  # Check system health"
     echo "    dotfiles schedule daily          # Setup daily auto-updates"
+    echo "    dotfiles prompt tide             # Switch to Tide prompt"
+    echo "    dotfiles prompt hydro            # Switch to Hydro prompt"
     echo
     echo -e "${BOLD}FILES:${NC}"
     echo "    Logs: ~/.dotfiles-update.log"
@@ -257,6 +260,81 @@ run_doctor() {
     fi
 }
 
+# Switch Fish shell prompt
+switch_fish_prompt() {
+    local prompt="${1:-}"
+    
+    if [[ -z "$prompt" ]]; then
+        log_header "🐟 Fish Shell Prompt Options"
+        echo
+        echo "Available prompts:"
+        echo "  🌊 tide     - Feature-rich with async rendering (default)"
+        echo "  💧 hydro    - Ultra-fast and minimal"
+        echo "  🚀 starship - Cross-shell Rust prompt"
+        echo
+        echo "Current prompt: $(cat ~/.config/fish/.prompt_choice 2>/dev/null || echo "tide")"
+        echo
+        echo "Usage: dotfiles prompt <tide|hydro|starship>"
+        return 0
+    fi
+    
+    case "$prompt" in
+        tide|hydro|starship)
+            if ! command -v fish >/dev/null 2>&1; then
+                log_error "Fish shell not installed"
+                return 1
+            fi
+            
+            # Create config directory if it doesn't exist
+            mkdir -p ~/.config/fish
+            
+            # Set the prompt choice
+            echo "$prompt" > ~/.config/fish/.prompt_choice
+            
+            # Check if prompt is available
+            case "$prompt" in
+                tide)
+                    if ! fish -c "functions -q tide" 2>/dev/null; then
+                        log_warn "Tide not installed. Installing via Fisher..."
+                        fish -c "fisher install IlanCosman/tide@v6" || {
+                            log_error "Failed to install Tide. Run: fisher install IlanCosman/tide@v6"
+                            return 1
+                        }
+                    fi
+                    log_success "Switched to Tide prompt 🌊"
+                    log_info "Run 'tide configure' to customize your prompt"
+                    ;;
+                hydro)
+                    if ! fish -c "functions -q hydro_prompt" 2>/dev/null; then
+                        log_warn "Hydro not installed. Installing via Fisher..."
+                        fish -c "fisher install jorgebucaran/hydro" || {
+                            log_error "Failed to install Hydro. Run: fisher install jorgebucaran/hydro"
+                            return 1
+                        }
+                    fi
+                    log_success "Switched to Hydro prompt 💧"
+                    log_info "Hydro is minimal by design - configure via Fish variables if needed"
+                    ;;
+                starship)
+                    if ! command -v starship >/dev/null 2>&1; then
+                        log_error "Starship not installed. Run 'dotfiles install' first"
+                        return 1
+                    fi
+                    log_success "Switched to Starship prompt 🚀"
+                    log_info "Configure Starship with ~/.config/starship.toml"
+                    ;;
+            esac
+            
+            log_info "Restart your Fish shell or run 'exec fish' to see the new prompt"
+            ;;
+        *)
+            log_error "Invalid prompt: $prompt"
+            log_info "Available options: tide, hydro, starship"
+            return 1
+            ;;
+    esac
+}
+
 # Backup management
 manage_backups() {
     local action="${1:-list}"
@@ -337,6 +415,9 @@ main() {
             ;;
         doctor)
             run_doctor
+            ;;
+        prompt)
+            switch_fish_prompt "${1:-}"
             ;;
         help|--help|-h)
             show_help
