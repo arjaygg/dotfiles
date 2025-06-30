@@ -1,15 +1,14 @@
 # Shared Git configuration template
 # Variables will be replaced during installation:
-# %USER_NAME% - User's full name
-# %USER_EMAIL% - User's email address
-# %EDITOR% - Preferred editor
+# {{NAME}} - User's full name
+# {{EMAIL}} - User's email address
 
 [user]
-    name = %USER_NAME%
-    email = %USER_EMAIL%
+    name = {{NAME}}
+    email = {{EMAIL}}
 
 [core]
-    editor = %EDITOR%
+    editor = nvim
     autocrlf = input
     excludesfile = ~/.gitignore_global
     pager = delta

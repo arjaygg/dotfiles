@@ -250,8 +250,8 @@ test_package_lists() {
         test_fail "Package lists" "Package arrays not found in installer"
     fi
     
-    # Check for key tools
-    local key_tools=("git" "fish" "bat" "eza" "fd" "ripgrep" "fzf")
+    # Check for key tools (use actual package names)
+    local key_tools=("git" "fish" "bat" "eza" "fd-find" "ripgrep" "fzf")
     local all_found=true
     
     for tool in "${key_tools[@]}"; do
