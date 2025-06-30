@@ -42,12 +42,14 @@ DEVELOPMENT_PACKAGES=(
 
 MODERN_CLI_PACKAGES=(
     "bat"
-    "exa"
+    "eza"
     "fd-find"
     "ripgrep"
     "fzf"
     "starship"
     "delta"
+    "gh"
+    "lazygit"
 )
 
 OPTIONAL_PACKAGES=(
@@ -57,6 +59,7 @@ OPTIONAL_PACKAGES=(
     "tree"
     "jq"
     "yq"
+    "kubectl"
 )
 
 # Install packages with Homebrew (macOS)
@@ -105,11 +108,11 @@ install_with_brew() {
     
     # Modern CLI tools
     log_info "Installing modern CLI tools..."
-    brew install bat exa fd ripgrep fzf starship git-delta
+    brew install bat eza fd ripgrep fzf starship git-delta gh lazygit
     
     # Optional packages
     log_info "Installing optional packages..."
-    brew install neovim zsh htop tree jq yq
+    brew install neovim zsh htop tree jq yq kubectl
     
     log_success "Homebrew installation completed"
 }
@@ -158,9 +161,14 @@ install_with_apt() {
         fi
     fi
     
-    # exa
-    if ! command -v exa >/dev/null 2>&1; then
-        sudo apt install -y exa
+    # eza
+    if ! command -v eza >/dev/null 2>&1; then
+        # eza is not in standard Ubuntu repos, install from GitHub releases
+        EZA_VERSION=$(curl -s https://api.github.com/repos/eza-community/eza/releases/latest | grep '"tag_name"' | cut -d'"' -f4)
+        wget "https://github.com/eza-community/eza/releases/download/${EZA_VERSION}/eza_x86_64-unknown-linux-gnu.tar.gz"
+        tar -xzf eza_x86_64-unknown-linux-gnu.tar.gz
+        sudo mv eza /usr/local/bin/
+        rm eza_x86_64-unknown-linux-gnu.tar.gz
     fi
     
     # fd
@@ -186,6 +194,23 @@ install_with_apt() {
         curl -sS https://starship.rs/install.sh | sh -s -- -y
     fi
     
+    # gh (GitHub CLI)
+    if ! command -v gh >/dev/null 2>&1; then
+        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+        sudo apt update
+        sudo apt install -y gh
+    fi
+    
+    # lazygit
+    if ! command -v lazygit >/dev/null 2>&1; then
+        LAZYGIT_VERSION=$(curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep '"tag_name"' | sed -E 's/.*"v*([^"]+)".*/\1/')
+        curl -Lo lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/latest/download/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+        tar xf lazygit.tar.gz lazygit
+        sudo install lazygit /usr/local/bin
+        rm lazygit.tar.gz lazygit
+    fi
+    
     # Optional packages
     log_info "Installing optional packages..."
     sudo apt install -y neovim zsh htop tree jq
@@ -194,6 +219,13 @@ install_with_apt() {
     if ! command -v yq >/dev/null 2>&1; then
         sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
         sudo chmod +x /usr/local/bin/yq
+    fi
+    
+    # kubectl
+    if ! command -v kubectl >/dev/null 2>&1; then
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+        rm kubectl
     fi
     
     log_success "APT installation completed"
@@ -216,11 +248,11 @@ install_with_pacman() {
     
     # Modern CLI tools
     log_info "Installing modern CLI tools..."
-    sudo pacman -S --noconfirm bat exa fd ripgrep fzf starship git-delta
+    sudo pacman -S --noconfirm bat eza fd ripgrep fzf starship git-delta github-cli lazygit
     
     # Optional packages
     log_info "Installing optional packages..."
-    sudo pacman -S --noconfirm neovim zsh htop tree jq yq
+    sudo pacman -S --noconfirm neovim zsh htop tree jq yq kubectl
     
     log_success "Pacman installation completed"
 }
@@ -395,8 +427,22 @@ main() {
     # Setup shell integration
     setup_shell_integration
     
+    # Setup dotfiles command
+    log_info "Setting up dotfiles management command..."
+    "$DOTFILES_ROOT/scripts/setup-dotfiles-alias.sh"
+    
+    # Create initial symlinks
+    log_info "Creating configuration symlinks..."
+    "$DOTFILES_ROOT/scripts/create-symlinks.sh" --force
+    
     log_success "Traditional installation completed!"
     log_info "Please restart your shell or run: source ~/.bashrc (or equivalent)"
+    echo
+    log_info "💡 Quick start commands:"
+    echo "  dotfiles status    # Check installation"
+    echo "  dotfiles sync      # Sync configurations"
+    echo "  dotfiles update    # Update tools"
+    echo "  dotfiles schedule  # Setup auto-updates"
 }
 
 # Run main function if script is executed directly

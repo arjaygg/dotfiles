@@ -1,31 +1,47 @@
-# Traditional Setup Integration
+# Traditional Self-Maintaining Setup
 
-This document describes how to use the traditional (non-Nix) setup that has been integrated from the [arjaygg/dotfiles_old](https://github.com/arjaygg/dotfiles_old/tree/feature/Ubutuntu22.04.2) repository.
+This document describes the traditional (non-Nix) setup with complete automation capabilities. The system maintains itself with minimal manual intervention.
 
 ## Overview
 
-The traditional setup provides an alternative installation method that uses system package managers directly instead of Nix. This is useful for:
+The traditional setup provides a fully automated dotfiles system that:
 
-- Quick setup on systems without Nix
-- Testing configurations before committing to Nix setup
-- Systems where Nix installation is not feasible
-- Ubuntu 22.04.2 specific configurations
+- **Self-maintains**: Automatically updates tools and configurations
+- **Cross-platform**: Works on macOS, Linux, and WSL
+- **Zero-config**: Minimal setup, maximum automation
+- **Fail-safe**: Automatic backups and rollback capabilities
+- **Monitored**: Health checks and comprehensive logging
+
+Perfect for:
+- Development teams needing standardized environments
+- Personal use with zero maintenance overhead
+- Systems where you want modern tools without package manager complexity
+- Quick onboarding of new machines
 
 ## Installation
 
-### Quick Start
+### 🚀 Automated Installation (Recommended)
 
-To install the traditional setup with all configurations:
+Complete setup with automation in 2 minutes:
 
 ```bash
+# Clone repository
+git clone https://github.com/arjaygg/dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+
+# Install everything with automation
 ./scripts/install-traditional.sh
+
+# Enable daily automated maintenance
+dotfiles schedule daily
+
+# Verify installation
+dotfiles status
 ```
 
-The script will auto-detect your package manager (apt, brew, pacman) and install accordingly.
+### Manual Installation Options
 
-### Manual Package Manager Selection
-
-If you want to force a specific package manager:
+Force a specific package manager:
 
 ```bash
 ./scripts/install-traditional.sh --apt     # For Ubuntu/Debian
@@ -34,24 +50,39 @@ If you want to force a specific package manager:
 ./scripts/install-traditional.sh --generic # Fallback method
 ```
 
+### Custom Installation
+
+```bash
+# Install configurations only (skip tool installation)
+./scripts/install-traditional.sh --skip-tools
+
+# Manual automation setup after installation
+dotfiles schedule daily    # Daily tool updates
+dotfiles schedule weekly   # Weekly config sync
+dotfiles schedule monthly  # Monthly full maintenance
+```
+
 ## What Gets Installed
 
-### System Tools
-- **Modern CLI tools**: `bat`, `exa`, `fd`, `ripgrep`, `fzf`
-- **Development tools**: `git`, `curl`, `fish`, `starship`
-- **Programming languages**: Go, Rust, Node.js, Python
-- **Utilities**: `htop`, `tree`, `jq`, `yq`
+### 🛠️ Modern Development Tools
+- **Modern CLI**: `bat`, `eza`, `fd`, `ripgrep`, `fzf`, `starship`
+- **Git Workflow**: `git`, `gh` (GitHub CLI), `lazygit`, `delta`
+- **Development**: `nvim`, `tmux`, `curl`, `jq`, `yq`
+- **Languages**: Go, Rust (with cargo), Node.js (with npm), Python
+- **Cloud/DevOps**: `kubectl`, container tools
 
-### Applications
-- **Alacritty**: Modern terminal emulator with Catppuccin theme
-- **i3 Window Manager**: Tiling window manager (Linux only)
-- **Neovim**: Modern text editor
+### 🖥️ Applications & Configurations
+- **Alacritty**: Modern terminal with optimized themes
+- **i3 Window Manager**: Productivity-focused tiling (Linux)
+- **Fish Shell**: Modern shell with intelligent completions
+- **Neovim**: Extensible editor with modern plugins
 
-### Configurations
-- i3 window manager configuration with custom keybindings
-- Alacritty terminal configuration
-- Fish shell functions and abbreviations
-- System tool configurations and aliases
+### 🤖 Automation System
+- **Command Interface**: Global `dotfiles` command for all operations
+- **Auto-Updates**: Daily tool updates, weekly config sync
+- **Health Monitoring**: Automatic issue detection and resolution
+- **Backup System**: Automatic backups before any changes
+- **Cross-Platform**: Consistent behavior across macOS/Linux/WSL
 
 ## Directory Structure
 
@@ -128,27 +159,94 @@ This installs:
 - **Performance**: GPU acceleration enabled
 - **Customization**: Transparent background, custom key bindings
 
+## 🤖 Automation Features
+
+### Daily Usage (Zero Maintenance!)
+
+After installation, your system maintains itself:
+
+```bash
+# Check overall system status
+dotfiles status
+
+# View recent activity  
+tail -20 ~/.dotfiles-update.log
+
+# Manual operations (run automatically)
+dotfiles sync      # Weekly - sync configs
+dotfiles update    # Daily - update tools
+dotfiles health    # Continuous - check health
+```
+
+### Automated Maintenance Schedule
+
+| Frequency | Operations | Command |
+|-----------|------------|---------|
+| **Daily** | Tool updates, plugin updates, cleanup | `auto-update.sh` |
+| **Weekly** | Config sync, repository updates | `dotfiles-sync.sh` |
+| **Monthly** | Full system maintenance | `auto-update.sh` (full) |
+
+### Backup & Recovery
+
+**Automatic Backups**:
+- Created before every change
+- Stored in `~/.dotfiles-backups/`
+- Automatic cleanup (keeps last 5)
+- Easy restoration
+
+```bash
+# Manage backups
+dotfiles backup list      # List available backups
+dotfiles backup create    # Create manual backup
+dotfiles backup clean     # Clean old backups
+
+# Restore manually if needed
+ls ~/.dotfiles-backups/
+cp -r ~/.dotfiles-backups/20240630_120000/.bashrc ~/
+```
+
+### Health Monitoring
+
+The system continuously monitors:
+- **Tool availability** and versions
+- **Configuration integrity** (symlinks, syntax)
+- **Repository status** (updates, conflicts)
+- **System health** (permissions, dependencies)
+
+```bash
+# Health commands
+dotfiles health     # Quick health check
+dotfiles doctor     # Comprehensive diagnosis
+dotfiles status     # Full system status
+```
+
 ## Post-Installation Steps
 
-### For i3 Users (Linux)
-1. Log out of your current session
-2. At the login screen, select "i3" as your session type
-3. Log in to start using the i3 window manager
-4. Configure additional tools:
-   - Install and configure polybar for status bar
-   - Install and configure rofi themes
-   - Add wallpapers to `~/Pictures/wallpapers/`
+### 🐚 Shell Setup
+1. **Automatic**: Shell configuration applied during installation
+2. **Fish Shell**: Restart terminal to activate Fish features
+3. **Customization**: Add personal functions to `~/.config/fish/functions/`
 
-### Shell Configuration
-1. Restart your terminal or run: `source ~/.bashrc`
-2. If using Fish shell, run: `fish` to switch to Fish
-3. Install additional Fish plugins as needed
+### 🖥️ Desktop Environment (Linux)
+1. **i3 Window Manager**: 
+   - Log out and select "i3" at login screen
+   - Automatic configuration applied
+   - Keybindings ready to use (`Mod+Return` for terminal)
 
-### Customization
-- Configuration files are located in `~/.config/`
-- Modify `~/.config/i3/config` for i3 customizations
-- Modify `~/.config/alacritty/alacritty.yml` for terminal customizations
-- Add custom Fish functions to `~/.config/fish/functions/`
+2. **Terminal Setup**:
+   - Alacritty configured with modern theme
+   - Font and color schemes optimized
+   - GPU acceleration enabled
+
+### 🎨 Customization Points
+
+| Component | Configuration Location | Purpose |
+|-----------|----------------------|---------|
+| **Shell** | `~/.config/fish/config.fish` | Fish shell settings |
+| **Terminal** | `~/.config/alacritty/alacritty.yml` | Terminal appearance |
+| **Editor** | `~/.config/nvim/` | Neovim configuration |
+| **Git** | `~/.gitconfig` | Git aliases and settings |
+| **i3** | `~/.config/i3/config` | Window manager |
 
 ## Troubleshooting
 
