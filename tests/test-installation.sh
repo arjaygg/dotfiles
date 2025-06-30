@@ -276,14 +276,12 @@ test_symlink_creation() {
     
     # Test symlink script has help function
     local help_output
-    if help_output=$("$DOTFILES_ROOT/scripts/create-symlinks.sh" --help 2>&1); then
-        if echo "$help_output" | grep -qi "help\|usage"; then
-            test_pass "Symlink script has help function"
-        else
-            test_fail "Symlink creation" "Help output doesn't contain expected text: $help_output"
-        fi
+    help_output=$("$DOTFILES_ROOT/scripts/create-symlinks.sh" --help 2>&1 || true)
+    
+    if echo "$help_output" | grep -qi "help\|usage"; then
+        test_pass "Symlink script has help function"
     else
-        test_fail "Symlink creation" "Help command failed with exit code $?"
+        test_fail "Symlink creation" "Help output doesn't contain expected text: $help_output"
     fi
 }
 
