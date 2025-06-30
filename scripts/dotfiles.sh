@@ -7,13 +7,22 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_ROOT="$(dirname "$SCRIPT_DIR")"
 
-# Colors
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-BOLD='\033[1m'
-NC='\033[0m'
+# Colors - only use if terminal supports them
+if [[ -t 1 ]] && [[ "${TERM:-}" != "dumb" ]] && command -v tput >/dev/null 2>&1 && tput colors >/dev/null 2>&1; then
+    RED='\033[0;31m'
+    GREEN='\033[0;32m'
+    YELLOW='\033[1;33m'
+    BLUE='\033[0;34m'
+    BOLD='\033[1m'
+    NC='\033[0m'
+else
+    RED=''
+    GREEN=''
+    YELLOW=''
+    BLUE=''
+    BOLD=''
+    NC=''
+fi
 
 # Helper functions
 log_info() { echo -e "${BLUE}ℹ${NC} $1"; }
@@ -24,47 +33,45 @@ log_header() { echo -e "${BOLD}${BLUE}$1${NC}"; }
 
 # Show help
 show_help() {
-    cat << EOF
-${BOLD}Dotfiles Management CLI${NC}
-
-${BOLD}USAGE:${NC}
-    dotfiles <command> [options]
-
-${BOLD}COMMANDS:${NC}
-    ${GREEN}sync${NC}           Sync configurations and update repository
-    ${GREEN}update${NC}         Update all tools and packages
-    ${GREEN}install${NC}        Install dotfiles on a new system
-    ${GREEN}backup${NC}         Create backup of current configurations
-    ${GREEN}restore${NC}        Restore from a backup
-    ${GREEN}health${NC}         Run health checks
-    ${GREEN}status${NC}         Show dotfiles status
-    ${GREEN}schedule${NC}       Setup automated maintenance
-    ${GREEN}clean${NC}          Clean up old backups and caches
-    ${GREEN}doctor${NC}         Diagnose and fix common issues
-
-${BOLD}SYNC OPTIONS:${NC}
-    --force             Force sync even if no changes
-    --no-backup         Skip backing up existing configs
-    --skip-tools        Skip tool updates
-
-${BOLD}UPDATE OPTIONS:${NC}
-    --skip-system       Skip system package updates
-    --skip-tools        Skip development tool updates
-
-${BOLD}EXAMPLES:${NC}
-    dotfiles sync                    # Sync configurations
-    dotfiles update --skip-system    # Update tools only
-    dotfiles install                 # Fresh installation
-    dotfiles health                  # Check system health
-    dotfiles schedule daily          # Setup daily auto-updates
-
-${BOLD}FILES:${NC}
-    Logs: ~/.dotfiles-update.log
-    Backups: ~/.dotfiles-backups/
-    Config: ~/.dotfiles.conf
-
-For more help: dotfiles <command> --help
-EOF
+    echo -e "${BOLD}Dotfiles Management CLI${NC}"
+    echo
+    echo -e "${BOLD}USAGE:${NC}"
+    echo "    dotfiles <command> [options]"
+    echo
+    echo -e "${BOLD}COMMANDS:${NC}"
+    echo -e "    ${GREEN}sync${NC}           Sync configurations and update repository"
+    echo -e "    ${GREEN}update${NC}         Update all tools and packages"
+    echo -e "    ${GREEN}install${NC}        Install dotfiles on a new system"
+    echo -e "    ${GREEN}backup${NC}         Create backup of current configurations"
+    echo -e "    ${GREEN}restore${NC}        Restore from a backup"
+    echo -e "    ${GREEN}health${NC}         Run health checks"
+    echo -e "    ${GREEN}status${NC}         Show dotfiles status"
+    echo -e "    ${GREEN}schedule${NC}       Setup automated maintenance"
+    echo -e "    ${GREEN}clean${NC}          Clean up old backups and caches"
+    echo -e "    ${GREEN}doctor${NC}         Diagnose and fix common issues"
+    echo
+    echo -e "${BOLD}SYNC OPTIONS:${NC}"
+    echo "    --force             Force sync even if no changes"
+    echo "    --no-backup         Skip backing up existing configs"
+    echo "    --skip-tools        Skip tool updates"
+    echo
+    echo -e "${BOLD}UPDATE OPTIONS:${NC}"
+    echo "    --skip-system       Skip system package updates"
+    echo "    --skip-tools        Skip development tool updates"
+    echo
+    echo -e "${BOLD}EXAMPLES:${NC}"
+    echo "    dotfiles sync                    # Sync configurations"
+    echo "    dotfiles update --skip-system    # Update tools only"
+    echo "    dotfiles install                 # Fresh installation"
+    echo "    dotfiles health                  # Check system health"
+    echo "    dotfiles schedule daily          # Setup daily auto-updates"
+    echo
+    echo -e "${BOLD}FILES:${NC}"
+    echo "    Logs: ~/.dotfiles-update.log"
+    echo "    Backups: ~/.dotfiles-backups/"
+    echo "    Config: ~/.dotfiles.conf"
+    echo
+    echo "For more help: dotfiles <command> --help"
 }
 
 # Show dotfiles status
