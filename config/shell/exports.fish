@@ -19,8 +19,8 @@ set -gx HISTFILESIZE 20000
 set -gx CLICOLOR 1
 set -gx LSCOLORS ExGxBxDxCxEgEdxbxgxcxd
 
-# Language and locale
-set -gx LANG en_US.UTF-8
+# Language and locale - use C.UTF-8 for broader compatibility
+set -gx LANG C.UTF-8
 set -gx LC_ALL C.UTF-8
 
 # Development paths and configurations
