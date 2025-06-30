@@ -1,6 +1,13 @@
 # Fish shell configuration for dotfiles
 # This config prioritizes Fish features while maintaining compatibility
 
+# Fisher plugin manager bootstrap
+if not functions -q fisher
+    set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
+    curl https://git.io/fisher --create-dirs -sLo $XDG_CONFIG_HOME/fish/functions/fisher.fish
+    fish -c fisher
+end
+
 # Source shared shell configurations
 if test -f "$HOME/.dotfiles/config/shell/exports.fish"
     source "$HOME/.dotfiles/config/shell/exports.fish"

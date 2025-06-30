@@ -41,21 +41,7 @@ if command -v fd >/dev/null 2>&1; then
     alias ffind='find' # Original find
 fi
 
-# Git aliases
-alias g='git'
-alias ga='git add'
-alias gaa='git add .'
-alias gc='git commit'
-alias gcm='git commit -m'
-alias gco='git checkout'
-alias gcb='git checkout -b'
-alias gd='git diff'
-alias gl='git log --oneline'
-alias gp='git push'
-alias gpl='git pull'
-alias gs='git status'
-alias gst='git stash'
-alias gsp='git stash pop'
+# Git aliases - Note: Fish shell uses jhillyerd/plugin-git Fisher plugin for enhanced git aliases
 
 # Directory shortcuts
 alias dl='cd ~/Downloads'

@@ -25,6 +25,7 @@ declare -A DOTFILES_MAP=(
     # Shell configurations
     ["$DOTFILES_ROOT/config/bash/bashrc"]="$HOME/.bashrc"
     ["$DOTFILES_ROOT/config/fish/config.fish"]="$HOME/.config/fish/config.fish"
+    ["$DOTFILES_ROOT/config/fish/fish_plugins"]="$HOME/.config/fish/fish_plugins"
     
     # Git configuration
     ["$DOTFILES_ROOT/config/git/gitconfig.template"]="$HOME/.gitconfig"

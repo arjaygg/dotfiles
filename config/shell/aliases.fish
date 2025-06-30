@@ -41,21 +41,7 @@ if command -v fd >/dev/null 2>&1
     alias ffind 'command find'  # Original find
 end
 
-# Git aliases
-alias g 'git'
-alias ga 'git add'
-alias gaa 'git add .'
-alias gc 'git commit'
-alias gcm 'git commit -m'
-alias gco 'git checkout'
-alias gcb 'git checkout -b'
-alias gd 'git diff'
-alias gl 'git log --oneline'
-alias gp 'git push'
-alias gpl 'git pull'
-alias gs 'git status'
-alias gst 'git stash'
-alias gsp 'git stash pop'
+# Git aliases - provided by jhillyerd/plugin-git Fisher plugin
 
 # Directory shortcuts
 alias dl 'cd ~/Downloads'
