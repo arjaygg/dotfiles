@@ -25,21 +25,12 @@
   };
 
   outputs =
-    {
-      nur,
-      # , neovim-nightly
-      caarlos0-nur,
-      charmbracelet-nur,
-      goreleaser-nur,
-      darwin,
-      home-manager,
-      nix-index-database,
-      nixpkgs,
-      ...
-    }:
+    { self, nur, caarlos0-nur, charmbracelet-nur, goreleaser-nur, darwin, home-manager, nix-index-database, nixpkgs, ... }:
     let
       overlays = [
-        # inputs.neovim-nightly.overlay
+        (final: prev: {
+          gemini-cli = prev.callPackage ./pkgs/gemini-cli { };
+        })
         (_final: prev: {
           nur = import nur {
             nurpkgs = prev;
@@ -52,7 +43,6 @@
           };
         })
       ];
-
       forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.platforms.unix;
 
       nixpkgsFor = forAllSystems (
@@ -64,6 +54,9 @@
       );
     in
     {
+      packages = forAllSystems (system: {
+        gemini-cli = nixpkgsFor.${system}.callPackage ./pkgs/gemini-cli { };
+      });
       nixosConfigurations = {
         media = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";

@@ -12,7 +12,7 @@
     with pkgs.nodePackages_latest;
     [
       # custom packages
-      (pkgs.callPackage ../pkgs/bins { })
+      pkgs.gemini-cli
 
       age
       claude-code

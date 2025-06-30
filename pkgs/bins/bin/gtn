@@ -1,6 +1,0 @@
-#!/bin/sh
-# create the next semantic tag and push
-set -e
-
-next="$(svu next --always)"
-git tag -m "$next" "$next" && svu current
