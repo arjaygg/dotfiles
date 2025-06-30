@@ -219,7 +219,7 @@ test_documentation() {
         "AUTOMATION.md"
         "ARCHITECTURE.md"
         "TROUBLESHOOTING.md"
-        "TRADITIONAL-SETUP.md"
+        "SYSTEM-SETUP.md"
     )
     
     local all_exist=true
