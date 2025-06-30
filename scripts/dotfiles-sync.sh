@@ -134,7 +134,7 @@ update_tools() {
     # Run system installer to ensure tools are present
     if [[ -x "$DOTFILES_ROOT/scripts/install-system.sh" ]]; then
         log_info "Running system installer for missing tools..."
-        "$DOTFILES_ROOT/scripts/install-system.sh" --update-only 2>/dev/null || true
+        "$DOTFILES_ROOT/scripts/install-system.sh" 2>/dev/null || true
     fi
 }
 
