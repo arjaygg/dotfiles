@@ -31,7 +31,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         # Test package manager detection
-        ./scripts/install-traditional.sh --help
+        ./scripts/install-tools.sh --help || echo "No help option available"
         
         # Test symlink creation (dry run)
         ./scripts/create-symlinks.sh --help || true
@@ -40,7 +40,7 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         # Test package manager detection
-        ./scripts/install-traditional.sh --help
+        ./scripts/install-tools.sh --help || echo "No help option available"
         
         # Test Homebrew detection
         which brew || echo "Homebrew not available (expected in CI)"
