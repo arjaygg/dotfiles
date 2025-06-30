@@ -99,6 +99,18 @@ MODERN_CLI_PACKAGES=(
     "delta"
     "gh"
     "lazygit"
+    "atuin"
+    "broot"
+    "zoxide"
+    "dust"
+    "procs"
+    "hyperfine"
+    "tokei"
+    "bandwhich"
+    "bottom"
+    "grex"
+    "sd"
+    "choose"
 )
 
 OPTIONAL_PACKAGES=(
