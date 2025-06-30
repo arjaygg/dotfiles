@@ -21,7 +21,7 @@ set -gx LSCOLORS ExGxBxDxCxEgEdxbxgxcxd
 
 # Language and locale
 set -gx LANG en_US.UTF-8
-set -gx LC_ALL en_US.UTF-8
+set -gx LC_ALL C.UTF-8
 
 # Development paths and configurations
 set -gx GOPATH "$HOME/go"
