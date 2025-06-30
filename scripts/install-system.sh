@@ -196,6 +196,12 @@ install_with_brew() {
     # Install Claude CLI
     install_claude_cli
     
+    # Install Fisher for Fish shell if available
+    if command -v fish >/dev/null 2>&1; then
+        log_info "Installing Fisher plugin manager for Fish..."
+        fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher" 2>/dev/null || log_warn "Fisher installation failed - can be installed manually later"
+    fi
+    
     log_success "Homebrew installation completed"
 }
 
@@ -322,6 +328,12 @@ install_with_apt() {
     # Install Claude CLI
     install_claude_cli
     
+    # Install Fisher for Fish shell if available
+    if command -v fish >/dev/null 2>&1; then
+        log_info "Installing Fisher plugin manager for Fish..."
+        fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher" 2>/dev/null || log_warn "Fisher installation failed - can be installed manually later"
+    fi
+    
     log_success "APT installation completed"
 }
 
@@ -350,6 +362,12 @@ install_with_pacman() {
     
     # Install Claude CLI
     install_claude_cli
+    
+    # Install Fisher for Fish shell if available
+    if command -v fish >/dev/null 2>&1; then
+        log_info "Installing Fisher plugin manager for Fish..."
+        fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher" 2>/dev/null || log_warn "Fisher installation failed - can be installed manually later"
+    fi
     
     log_success "Pacman installation completed"
 }
