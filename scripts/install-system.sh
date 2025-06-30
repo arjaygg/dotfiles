@@ -456,13 +456,25 @@ setup_shell_integration() {
     esac
     
     if [[ -n "$shell_rc" ]]; then
-        # Backup existing config
-        if [[ -f "$shell_rc" ]]; then
-            cp "$shell_rc" "${shell_rc}.backup"
+        # Check if this is already a symlink to our dotfiles
+        if [[ -L "$shell_rc" ]] && [[ "$(readlink "$shell_rc")" == *"dotfiles"* ]]; then
+            log_info "Shell config already managed by dotfiles: $shell_rc"
+            return 0
         fi
         
-        # Add our dotfiles integration
-        cat >> "$shell_rc" << EOF
+        # Check if it already has dotfiles integration
+        if [[ -f "$shell_rc" ]] && grep -q "# Dotfiles integration" "$shell_rc"; then
+            log_info "Shell integration already exists in $shell_rc"
+            return 0
+        fi
+        
+        # Only add integration if it's a real file (not symlinked)
+        if [[ -f "$shell_rc" ]] && [[ ! -L "$shell_rc" ]]; then
+            # Backup existing config
+            cp "$shell_rc" "${shell_rc}.backup"
+            
+            # Add our dotfiles integration
+            cat >> "$shell_rc" << EOF
 
 # Dotfiles integration
 if [[ -f "$DOTFILES_ROOT/config/shell/exports.sh" ]]; then
@@ -473,14 +485,40 @@ if [[ -f "$DOTFILES_ROOT/config/shell/aliases.sh" ]]; then
     source "$DOTFILES_ROOT/config/shell/aliases.sh"
 fi
 EOF
-        
-        log_success "Shell integration added to $shell_rc"
+            log_success "Shell integration added to $shell_rc"
+        else
+            log_info "Skipping shell integration - $shell_rc is symlinked or missing"
+        fi
+    fi
+}
+
+# Check repository state
+check_repo_state() {
+    local script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    local dotfiles_root="$(dirname "$script_dir")"
+    
+    if [[ -d "$dotfiles_root/.git" ]]; then
+        cd "$dotfiles_root"
+        if ! git diff-index --quiet HEAD --; then
+            log_error "Repository has uncommitted changes. Please commit or stash your changes first:"
+            echo
+            git status --short
+            echo
+            log_info "To fix this, run one of:"
+            log_info "  git add -A && git commit -m 'your message'"
+            log_info "  git stash push -m 'your stash message'"
+            log_info "  git restore .  # to discard changes"
+            exit 1
+        fi
     fi
 }
 
 # Main installation function
 main() {
     local method=""
+    
+    # Check repository state first
+    check_repo_state
     
     # Parse arguments
     while [[ $# -gt 0 ]]; do
