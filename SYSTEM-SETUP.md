@@ -1,10 +1,10 @@
-# Traditional Self-Maintaining Setup
+# System Self-Maintaining Setup
 
-This document describes the traditional (non-Nix) setup with complete automation capabilities. The system maintains itself with minimal manual intervention.
+This document describes the system (non-Nix) setup with complete automation capabilities. The system maintains itself with minimal system intervention.
 
 ## Overview
 
-The traditional setup provides a fully automated dotfiles system that:
+The system setup provides a fully automated dotfiles system that:
 
 - **Self-maintains**: Automatically updates tools and configurations
 - **Cross-platform**: Works on macOS, Linux, and WSL
@@ -30,7 +30,7 @@ git clone https://github.com/arjaygg/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
 
 # Install everything with automation
-./scripts/install-traditional.sh
+./scripts/install-system.sh
 
 # Enable daily automated maintenance
 dotfiles schedule daily
@@ -44,17 +44,17 @@ dotfiles status
 Force a specific package manager:
 
 ```bash
-./scripts/install-traditional.sh --apt     # For Ubuntu/Debian
-./scripts/install-traditional.sh --brew    # For macOS
-./scripts/install-traditional.sh --pacman  # For Arch Linux
-./scripts/install-traditional.sh --generic # Fallback method
+./scripts/install-system.sh --apt     # For Ubuntu/Debian
+./scripts/install-system.sh --brew    # For macOS
+./scripts/install-system.sh --pacman  # For Arch Linux
+./scripts/install-system.sh --generic # Fallback method
 ```
 
 ### Custom Installation
 
 ```bash
 # Install configurations only (skip tool installation)
-./scripts/install-traditional.sh --skip-tools
+./scripts/install-system.sh --skip-tools
 
 # Manual automation setup after installation
 dotfiles schedule daily    # Daily tool updates
@@ -87,7 +87,7 @@ dotfiles schedule monthly  # Monthly full maintenance
 ## Directory Structure
 
 ```
-traditional/
+system/
 ├── alacritty/          # Alacritty terminal configuration
 │   ├── alacritty.yml   # Terminal config file
 │   └── install.sh      # Installation script
@@ -108,7 +108,7 @@ You can install individual components by running their specific installation scr
 
 ### i3 Window Manager (Linux only)
 ```bash
-./traditional/i3/install.sh
+./system/i3/install.sh
 ```
 
 This installs:
@@ -118,7 +118,7 @@ This installs:
 
 ### Alacritty Terminal
 ```bash
-./traditional/alacritty/install.sh
+./system/alacritty/install.sh
 ```
 
 This installs:
@@ -128,7 +128,7 @@ This installs:
 
 ### System Tools
 ```bash
-./traditional/system/install.sh
+./system/system/install.sh
 ```
 
 This installs:
@@ -197,10 +197,10 @@ dotfiles health    # Continuous - check health
 ```bash
 # Manage backups
 dotfiles backup list      # List available backups
-dotfiles backup create    # Create manual backup
+dotfiles backup create    # Create system backup
 dotfiles backup clean     # Clean old backups
 
-# Restore manually if needed
+# Restore systemly if needed
 ls ~/.dotfiles-backups/
 cp -r ~/.dotfiles-backups/20240630_120000/.bashrc ~/
 ```
@@ -257,7 +257,7 @@ dotfiles status     # Full system status
 - Check i3 configuration: `i3 -C ~/.config/i3/config`
 
 **Alacritty font issues**
-- Install JetBrains Mono Nerd Font manually
+- Install JetBrains Mono Nerd Font systemly
 - Update font cache: `fc-cache -fv`
 
 **Shell integration not working**
@@ -275,7 +275,7 @@ If you encounter issues:
 
 ## Migration to Nix
 
-Once you've tested the traditional setup and are satisfied with the configurations, you can migrate to the Nix-based setup for better reproducibility and management:
+Once you've tested the system setup and are satisfied with the configurations, you can migrate to the Nix-based setup for better reproducibility and management:
 
 ```bash
 # Use the existing Nix setup

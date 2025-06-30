@@ -56,7 +56,7 @@ chmod +x ~/.dotfiles/scripts/*.sh
 sudo echo "Sudo access OK"
 
 # Run installation with proper permissions
-cd ~/.dotfiles && ./scripts/install-traditional.sh
+cd ~/.dotfiles && ./scripts/install-system.sh
 ```
 
 #### **Issue**: Package installation fails
@@ -74,11 +74,11 @@ sudo pacman -Sy         # Arch
 ping -c 3 google.com
 
 # Use specific package manager
-./scripts/install-traditional.sh --apt    # Force APT
-./scripts/install-traditional.sh --brew   # Force Homebrew
+./scripts/install-system.sh --apt    # Force APT
+./scripts/install-system.sh --brew   # Force Homebrew
 
 # Skip problematic tools
-./scripts/install-traditional.sh --skip-tools
+./scripts/install-system.sh --skip-tools
 ```
 
 ### Configuration Issues
@@ -455,7 +455,7 @@ rm -rf ~/.config/fish
 # 3. Fresh installation
 git clone https://github.com/arjaygg/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
-./scripts/install-traditional.sh
+./scripts/install-system.sh
 dotfiles schedule daily
 ```
 

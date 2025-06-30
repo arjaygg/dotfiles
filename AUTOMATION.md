@@ -16,7 +16,7 @@ Your dotfiles now include a comprehensive automation system that handles:
 ### Install and Setup
 ```bash
 # Install dotfiles with automation
-./scripts/install-traditional.sh
+./scripts/install-system.sh
 
 # Setup automated maintenance (daily updates)
 dotfiles schedule daily

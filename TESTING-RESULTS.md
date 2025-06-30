@@ -1,4 +1,4 @@
-# Traditional Setup Testing Results
+# System Setup Testing Results
 
 ## Test Summary
 
@@ -96,7 +96,7 @@ The traditional setup integration is **highly successful** for command-line tool
 **Recommendation**: 
 ✅ **The traditional setup is ready for use!** 
 
-Users can successfully run `./scripts/install-traditional.sh` to get a fully functional modern CLI environment with all the tools and configurations from the target repository.
+Users can successfully run `./scripts/install-system.sh` to get a fully functional modern CLI environment with all the tools and configurations from the target repository.
 
 ## Next Steps
 

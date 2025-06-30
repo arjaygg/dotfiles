@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Main installation script for hybrid dotfiles
-# Supports both Nix and traditional installation methods
+# Supports both Nix and system installation methods
 
 set -euo pipefail
 
@@ -32,7 +32,7 @@ USAGE:
     ./install.sh [OPTIONS]
 
 OPTIONS:
-    -m, --method METHOD     Installation method: 'nix', 'traditional', or 'auto'
+    -m, --method METHOD     Installation method: 'nix', 'system', or 'auto'
     -f, --force            Force installation (overwrite existing configs)
     -d, --dry-run          Show what would be done without executing
     -q, --quiet            Suppress non-essential output
@@ -40,13 +40,13 @@ OPTIONS:
 
 METHODS:
     nix                    Use Nix + Home Manager for package and config management
-    traditional            Use system package managers and manual config management
+    system            Use system package managers and manual config management
     auto                   Automatically detect and recommend the best method
 
 EXAMPLES:
     ./install.sh                           # Auto-detect and install
     ./install.sh --method nix              # Force Nix installation
-    ./install.sh --method traditional      # Force traditional installation
+    ./install.sh --method system      # Force system installation
     ./install.sh --dry-run                 # Preview what would be installed
     ./install.sh --force --method nix      # Force reinstall with Nix
 
@@ -92,8 +92,8 @@ parse_args() {
     done
     
     # Validate method
-    if [[ ! "$METHOD" =~ ^(nix|traditional|auto)$ ]]; then
-        log_error "Invalid method: $METHOD. Must be 'nix', 'traditional', or 'auto'"
+    if [[ ! "$METHOD" =~ ^(nix|system|auto)$ ]]; then
+        log_error "Invalid method: $METHOD. Must be 'nix', 'system', or 'auto'"
         exit 1
     fi
 }
@@ -141,8 +141,8 @@ detect_and_decide() {
             log_info "Auto-detected method: $METHOD"
             log_info "Reason: Based on available package managers and system configuration"
         else
-            log_warn "Could not auto-detect method, defaulting to traditional"
-            METHOD="traditional"
+            log_warn "Could not auto-detect method, defaulting to system"
+            METHOD="system"
         fi
     else
         log_info "Using specified method: $METHOD"
@@ -242,25 +242,25 @@ install_nix() {
     log_success "Nix installation completed"
 }
 
-# Install using traditional method
-install_traditional() {
-    log_step "Installing with traditional method..."
+# Install using system method
+install_system() {
+    log_step "Installing with system method..."
     
-    # Create traditional directories if they don't exist
-    mkdir -p traditional/{installers,symlinks}
+    # Create system directories if they don't exist
+    mkdir -p system/{installers,symlinks}
     
     # Install packages based on detected package managers
     if [[ " ${DOTFILES_PACKAGE_MANAGERS:-} " =~ " brew " ]]; then
         log_info "Installing packages with Homebrew..."
         if [[ "$DRY_RUN" == "false" ]]; then
-            scripts/install-traditional.sh --brew
+            scripts/install-system.sh --brew
         else
             log_info "[DRY-RUN] Would install packages via Homebrew"
         fi
     elif [[ " ${DOTFILES_PACKAGE_MANAGERS:-} " =~ " apt " ]]; then
         log_info "Installing packages with APT..."
         if [[ "$DRY_RUN" == "false" ]]; then
-            scripts/install-traditional.sh --apt
+            scripts/install-system.sh --apt
         else
             log_info "[DRY-RUN] Would install packages via APT"
         fi
@@ -284,7 +284,7 @@ main() {
 ╔══════════════════════════════════════════════════════════════╗
 ║                   🏠 HYBRID DOTFILES                         ║
 ║                                                              ║
-║  Supports both Nix and traditional installation methods     ║
+║  Supports both Nix and system installation methods     ║
 ╚══════════════════════════════════════════════════════════════╝
 EOF
     echo -e "${NC}"
@@ -303,8 +303,8 @@ EOF
         nix)
             install_nix
             ;;
-        traditional)
-            install_traditional
+        system)
+            install_system
             ;;
         *)
             log_error "Unknown installation method: $METHOD"

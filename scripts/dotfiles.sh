@@ -178,7 +178,7 @@ run_doctor() {
     
     # Check essential scripts
     log_info "Checking essential scripts..."
-    local scripts=("install-tools.sh" "dotfiles-sync.sh" "auto-update.sh")
+    local scripts=("install-system.sh" "dotfiles-sync.sh" "auto-update.sh")
     for script in "${scripts[@]}"; do
         if [[ -x "$SCRIPT_DIR/$script" ]]; then
             log_success "$script is executable"
@@ -284,7 +284,7 @@ main() {
             ;;
         install)
             log_header "🚀 Installing Dotfiles"
-            "$SCRIPT_DIR/install-tools.sh" "$@"
+            "$SCRIPT_DIR/install-system.sh" "$@"
             "$SCRIPT_DIR/dotfiles-sync.sh" --no-backup
             log_success "Installation completed!"
             ;;

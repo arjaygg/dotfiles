@@ -17,7 +17,7 @@ Originally based on caarlos0/dotfiles, now enhanced with:
 | **[Quick Start](#-quick-start)** | Get up and running in 2 minutes |
 | **[Automation Guide](AUTOMATION.md)** | Complete automation features |
 | **[System Architecture](ARCHITECTURE.md)** | How everything works |
-| **[Traditional Setup](TRADITIONAL-SETUP.md)** | Manual installation details |
+| **[System Setup](SYSTEM-SETUP.md)** | System installation details |
 | **[Shell Guide](SHELL-GUIDE.md)** | Shell configuration details |
 
 ## ⚡ Quick Start
@@ -27,7 +27,7 @@ Originally based on caarlos0/dotfiles, now enhanced with:
 # Clone and install with full automation
 git clone https://github.com/arjaygg/dotfiles.git ~/.dotfiles
 cd ~/.dotfiles
-./scripts/install-traditional.sh
+./scripts/install-system.sh
 
 # Setup automated maintenance
 dotfiles schedule daily
@@ -96,21 +96,21 @@ dotfiles install     # Fresh install on new system
 
 ### **Recommended: Full Automation**
 ```bash
-./scripts/install-traditional.sh        # Auto-detect and install everything
+./scripts/install-system.sh        # Auto-detect and install everything
 dotfiles schedule daily                 # Enable daily automation
 ```
 
 ### **Manual Package Manager Selection**
 ```bash
-./scripts/install-traditional.sh --apt     # Ubuntu/Debian
-./scripts/install-traditional.sh --brew    # macOS  
-./scripts/install-traditional.sh --pacman  # Arch Linux
-./scripts/install-traditional.sh --generic # Fallback method
+./scripts/install-system.sh --apt     # Ubuntu/Debian
+./scripts/install-system.sh --brew    # macOS  
+./scripts/install-system.sh --pacman  # Arch Linux
+./scripts/install-system.sh --generic # Fallback method
 ```
 
 ### **Custom Installation**
 ```bash
-./scripts/install-traditional.sh --skip-tools    # Install configs only
+./scripts/install-system.sh --skip-tools    # Install configs only
 dotfiles sync --no-backup                        # Skip backups
 dotfiles update --skip-system                    # Skip system packages
 ```
@@ -219,7 +219,7 @@ tail -20 ~/.dotfiles-update.log
 │   ├── dotfiles.sh      # Main CLI interface
 │   ├── dotfiles-sync.sh # Sync automation
 │   ├── auto-update.sh   # Update automation
-│   └── install-traditional.sh
+│   └── install-system.sh
 ├── 📁 traditional/      # Platform-specific configs
 │   ├── alacritty/       # Terminal emulator
 │   ├── i3/              # Window manager  
@@ -254,7 +254,7 @@ tail -20 ~/.dotfiles-update.log
 
 Ready to automate your development environment?
 
-1. **Install**: `git clone https://github.com/arjaygg/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && ./scripts/install-traditional.sh`
+1. **Install**: `git clone https://github.com/arjaygg/dotfiles.git ~/.dotfiles && cd ~/.dotfiles && ./scripts/install-system.sh`
 
 2. **Automate**: `dotfiles schedule daily`
 

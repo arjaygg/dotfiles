@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Tools installation script for dotfiles
+# System installation script for dotfiles
 # Installs packages using system package managers
 
 set -euo pipefail

@@ -58,7 +58,7 @@ dotfiles.sh
 ```bash
 dotfiles sync    → scripts/dotfiles-sync.sh
 dotfiles update  → scripts/auto-update.sh
-dotfiles install → scripts/install-traditional.sh
+dotfiles install → scripts/install-system.sh
 dotfiles health  → dotfiles-sync.sh --health-check-only
 dotfiles status  → Internal status function
 ```
@@ -127,7 +127,7 @@ Manual Tools ────┘
 | Go Tools | `go install <tool>@latest` | Daily |
 | Manual Tools | GitHub API + wget | Daily |
 
-### 4. Installation System (`install-traditional.sh`)
+### 4. Installation System (`install-system.sh`)
 
 **Purpose**: Bootstrap new systems with full dotfiles setup
 
@@ -410,13 +410,13 @@ wait  # Wait for all background jobs
 ### Adding New Tools
 
 **To add a new tool to auto-update**:
-1. Add to package lists in `install-traditional.sh`
+1. Add to package lists in `install-system.sh`
 2. Add update logic in `auto-update.sh`
 3. Add health check in `dotfiles-sync.sh`
 
 **Example**:
 ```bash
-# In install-traditional.sh
+# In install-system.sh
 MODERN_CLI_PACKAGES+=(
     "my-new-tool"
 )

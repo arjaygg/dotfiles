@@ -102,7 +102,7 @@ test_script_permissions() {
     test_start "Script permissions"
     
     local scripts=(
-        "install-tools.sh"
+        "install-system.sh"
         "dotfiles-sync.sh"
         "auto-update.sh"
         "dotfiles.sh"
@@ -132,7 +132,7 @@ test_script_syntax() {
     test_start "Script syntax validation"
     
     local scripts=(
-        "install-tools.sh"
+        "install-system.sh"
         "dotfiles-sync.sh"
         "auto-update.sh"
         "dotfiles.sh"
@@ -239,7 +239,7 @@ test_documentation() {
 test_package_lists() {
     test_start "Package lists in installer"
     
-    local installer="$DOTFILES_ROOT/scripts/install-tools.sh"
+    local installer="$DOTFILES_ROOT/scripts/install-system.sh"
     
     # Check if essential packages are defined
     if grep -q "ESSENTIAL_PACKAGES" "$installer" && \
