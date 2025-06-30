@@ -32,8 +32,8 @@ declare -A DOTFILES_MAP=(
     
     # Tool configurations
     ["$DOTFILES_ROOT/config/tmux/tmux.conf"]="$HOME/.tmux.conf"
-    ["$DOTFILES_ROOT/traditional/alacritty/alacritty.yml"]="$HOME/.config/alacritty/alacritty.yml"
-    ["$DOTFILES_ROOT/traditional/i3/i3config"]="$HOME/.config/i3/config"
+    ["$DOTFILES_ROOT/system/alacritty/alacritty.yml"]="$HOME/.config/alacritty/alacritty.yml"
+    ["$DOTFILES_ROOT/system/i3/i3config"]="$HOME/.config/i3/config"
 )
 
 # Check if we're in a git repository

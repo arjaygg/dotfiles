@@ -220,7 +220,7 @@ tail -20 ~/.dotfiles-update.log
 │   ├── dotfiles-sync.sh # Sync automation
 │   ├── auto-update.sh   # Update automation
 │   └── install-system.sh
-├── 📁 traditional/      # Platform-specific configs
+├── 📁 system/      # Platform-specific configs
 │   ├── alacritty/       # Terminal emulator
 │   ├── i3/              # Window manager  
 │   └── system/          # System tools

@@ -1,6 +1,6 @@
 # 🏠 Hybrid Dotfiles Setup
 
-This dotfiles repository supports both **Nix** and **traditional** installation methods, following DRY (Don't Repeat Yourself) principles for maximum reusability.
+This dotfiles repository supports both **Nix** and **system** installation methods, following DRY (Don't Repeat Yourself) principles for maximum reusability.
 
 ## 🏗️ Architecture Overview
 
@@ -13,7 +13,7 @@ dotfiles/
 │   ├── 📁 tmux/                  # Tmux configuration
 │   └── 📁 tools/                 # Tool-specific configs
 ├── 📁 nix/                       # Nix-specific files (current modules/, flake.nix)
-├── 📁 traditional/               # Traditional installation support
+├── 📁 system/               # Traditional installation support
 │   ├── 📁 installers/            # Package installation scripts
 │   └── 📁 symlinks/              # Symlink creation scripts
 ├── 📁 scripts/                   # Management and utility scripts
@@ -32,7 +32,7 @@ cd ~/.dotfiles
 
 The script will:
 1. **Detect your environment** (OS, package managers, existing tools)
-2. **Recommend the best method** (Nix vs traditional)
+2. **Recommend the best method** (Nix vs system)
 3. **Install packages and configure** your development environment
 4. **Create necessary symlinks** and configurations
 
@@ -42,8 +42,8 @@ The script will:
 # Force Nix installation
 ./install.sh --method nix
 
-# Force traditional installation
-./install.sh --method traditional
+# Force system installation
+./install.sh --method system
 
 # Preview what would be installed
 ./install.sh --dry-run
@@ -146,26 +146,26 @@ Contains all tool configurations in their raw form, designed to be:
 - **`machines/`** - Machine-specific configurations
 - **`pkgs/`** - Custom package definitions
 
-### `traditional/` - Traditional Setup
+### `system/` - Traditional Setup
 - **`installers/`** - Package installation scripts for different systems
 - **`symlinks/`** - Symlink creation and management scripts
 
 ### `scripts/` - Utility Scripts
 - **`detect-env.sh`** - Environment detection
 - **`install-nix.sh`** - Nix installation helper
-- **`install-traditional.sh`** - Traditional installation helper
+- **`install-system.sh`** - Traditional installation helper
 - **`create-symlinks.sh`** - Symlink management
 
 ## 🔄 Switching Between Methods
 
-You can switch between Nix and traditional methods:
+You can switch between Nix and system methods:
 
 ```bash
-# Switch to Nix (if you were using traditional)
+# Switch to Nix (if you were using system)
 ./install.sh --method nix --force
 
-# Switch to traditional (if you were using Nix)
-./install.sh --method traditional --force
+# Switch to system (if you were using Nix)
+./install.sh --method system --force
 ```
 
 **Note:** The `--force` flag will backup existing configurations before switching.
@@ -200,8 +200,8 @@ echo $EDITOR  # Should show nvim
 
 1. **Add to shared config:** Create configuration in `config/`
 2. **Update Nix modules:** Import config in appropriate `modules/` file
-3. **Update traditional scripts:** Add to installation scripts
-4. **Test both methods:** Ensure it works in both Nix and traditional setups
+3. **Update system scripts:** Add to installation scripts
+4. **Test both methods:** Ensure it works in both Nix and system setups
 
 ### Modifying Configurations
 
@@ -221,7 +221,7 @@ The dotfiles automatically detect and adapt to:
 
 ### Common Issues
 
-1. **Nix not found:** Run `./install.sh --method traditional` first
+1. **Nix not found:** Run `./install.sh --method system` first
 2. **Permission errors:** Ensure scripts are executable (`chmod +x`)
 3. **Config conflicts:** Use `--force` to backup and overwrite
 4. **Missing tools:** Check environment detection output
@@ -247,4 +247,4 @@ tail -f ~/.dotfiles/install.log
 4. **Reliability:** Automatic detection prevents errors
 5. **Scalability:** Easy to add new tools and configurations
 
-This hybrid approach gives you the best of both worlds: the power and reproducibility of Nix when you want it, and the simplicity and familiarity of traditional methods when you need it.
+This hybrid approach gives you the best of both worlds: the power and reproducibility of Nix when you want it, and the simplicity and familiarity of system methods when you need it.

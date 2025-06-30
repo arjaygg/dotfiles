@@ -24,8 +24,8 @@ declare -A SYMLINK_MAP=(
     ["config/fish/config.fish"]="$HOME/.config/fish/config.fish"
     ["config/git/gitignore_global"]="$HOME/.gitignore_global"
     ["config/tmux/tmux.conf"]="$HOME/.tmux.conf"
-    ["traditional/alacritty/alacritty.yml"]="$HOME/.config/alacritty/alacritty.yml"
-    ["traditional/i3/i3config"]="$HOME/.config/i3/config"
+    ["system/alacritty/alacritty.yml"]="$HOME/.config/alacritty/alacritty.yml"
+    ["system/i3/i3config"]="$HOME/.config/i3/config"
     ["config/shell/aliases.sh"]="$HOME/.aliases"
     ["config/shell/exports.sh"]="$HOME/.exports"
 )
