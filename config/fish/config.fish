@@ -1,14 +1,8 @@
 # Fish shell configuration for dotfiles
 # This config prioritizes Fish features while maintaining compatibility
 
-# Fisher plugin manager bootstrap (disabled for now due to network issues)
-# To install Fisher manually: curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher
-# if not functions -q fisher
-#     set -q XDG_CONFIG_HOME; or set XDG_CONFIG_HOME ~/.config
-#     if curl --connect-timeout 5 -fsSL https://git.io/fisher --create-dirs -o $XDG_CONFIG_HOME/fish/functions/fisher.fish >/dev/null 2>&1
-#         echo "Fisher installed. Run 'fisher update' to install plugins."
-#     end
-# end
+# Fisher plugin manager is installed via system install scripts
+# Use 'fisher update' to install plugins from fish_plugins file
 
 # Source shared shell configurations
 if test -f "$HOME/.dotfiles/config/shell/exports.fish"
