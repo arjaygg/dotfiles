@@ -218,7 +218,17 @@ install_with_apt() {
     
     # Development packages
     log_info "Installing development packages..."
-    sudo apt install -y nodejs npm python3 python3-pip
+    # Remove conflicting nodejs/npm packages first
+    sudo apt remove -y nodejs npm 2>/dev/null || true
+    
+    # Install Node.js from NodeSource to avoid conflicts
+    if ! command -v node >/dev/null 2>&1; then
+        log_info "Installing Node.js from NodeSource..."
+        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+        sudo apt install -y nodejs
+    fi
+    
+    sudo apt install -y python3 python3-pip
     
     # Install Go manually (APT version is often outdated)
     if ! command -v go >/dev/null 2>&1; then
