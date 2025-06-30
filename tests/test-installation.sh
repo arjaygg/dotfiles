@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Test suite for dotfiles installation and automation
 
-set -euo pipefail
+set -uo pipefail
+# Note: Not using -e to allow tests to continue even if individual tests fail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_ROOT="$(dirname "$SCRIPT_DIR")"
@@ -111,7 +112,11 @@ test_script_permissions() {
     
     local all_executable=true
     for script in "${scripts[@]}"; do
-        if [[ ! -x "$DOTFILES_ROOT/scripts/$script" ]]; then
+        local script_path="$DOTFILES_ROOT/scripts/$script"
+        if [[ ! -f "$script_path" ]]; then
+            test_fail "Script permissions" "Script '$script' not found"
+            all_executable=false
+        elif [[ ! -x "$script_path" ]]; then
             test_fail "Script permissions" "Script '$script' not executable"
             all_executable=false
         fi
@@ -137,7 +142,11 @@ test_script_syntax() {
     
     local all_valid=true
     for script in "${scripts[@]}"; do
-        if ! bash -n "$DOTFILES_ROOT/scripts/$script"; then
+        local script_path="$DOTFILES_ROOT/scripts/$script"
+        if [[ ! -f "$script_path" ]]; then
+            test_fail "Script syntax" "Script '$script' not found"
+            all_valid=false
+        elif ! bash -n "$script_path" 2>/dev/null; then
             test_fail "Script syntax" "Script '$script' has syntax errors"
             all_valid=false
         fi
@@ -152,16 +161,24 @@ test_script_syntax() {
 test_dotfiles_cli() {
     test_start "Dotfiles CLI interface"
     
+    local dotfiles_script="$DOTFILES_ROOT/scripts/dotfiles.sh"
+    
     # Test if dotfiles script exists and is executable
-    if [[ -x "$DOTFILES_ROOT/scripts/dotfiles.sh" ]]; then
-        # Test help command
-        if "$DOTFILES_ROOT/scripts/dotfiles.sh" help >/dev/null 2>&1; then
-            test_pass "Dotfiles CLI help command works"
-        else
-            test_fail "Dotfiles CLI" "Help command failed"
-        fi
+    if [[ ! -f "$dotfiles_script" ]]; then
+        test_fail "Dotfiles CLI" "Script not found"
+        return
+    fi
+    
+    if [[ ! -x "$dotfiles_script" ]]; then
+        test_fail "Dotfiles CLI" "Script not executable"
+        return
+    fi
+    
+    # Test help command
+    if "$dotfiles_script" help >/dev/null 2>&1; then
+        test_pass "Dotfiles CLI help command works"
     else
-        test_fail "Dotfiles CLI" "Script not found or not executable"
+        test_fail "Dotfiles CLI" "Help command failed"
     fi
 }
 
@@ -314,13 +331,13 @@ test_script_performance() {
     test_start "Script performance"
     
     # Test help commands (should be fast)
-    local start_time=$(date +%s.%N)
+    local start_time=$(date +%s)
     "$DOTFILES_ROOT/scripts/dotfiles.sh" help >/dev/null 2>&1 || true
-    local end_time=$(date +%s.%N)
-    local duration=$(echo "$end_time - $start_time" | bc 2>/dev/null || echo "0")
+    local end_time=$(date +%s)
+    local duration=$((end_time - start_time))
     
-    # Help should execute in under 2 seconds
-    if (( $(echo "$duration < 2.0" | bc -l 2>/dev/null || echo "1") )); then
+    # Help should execute in under 5 seconds (being generous for CI)
+    if [[ $duration -lt 5 ]]; then
         test_pass "Help command executes quickly ($duration seconds)"
     else
         test_fail "Script performance" "Help command too slow ($duration seconds)"
