@@ -84,7 +84,7 @@ show_status() {
     
     # Tool status
     echo "🛠️  Tools:"
-    local tools=("git" "fish" "nvim" "tmux" "bat" "eza" "fd" "rg" "fzf" "gh" "lazygit" "atuin")
+    local tools=("git" "fish" "nvim" "tmux" "bat" "eza" "fd" "rg" "fzf" "gh" "lazygit" "atuin" "broot")
     for tool in "${tools[@]}"; do
         if command -v "$tool" >/dev/null 2>&1; then
             local version="unknown"
@@ -98,7 +98,7 @@ show_status() {
                 nvim)
                     version=$(nvim --version 2>/dev/null | head -1 | awk '{print $2}' || echo "unknown")
                     ;;
-                bat|eza|fd|rg|fzf|gh|lazygit|atuin)
+                bat|eza|fd|rg|fzf|gh|lazygit|atuin|broot)
                     version=$(command "$tool" --version 2>/dev/null | head -1 | awk '{print $NF}' || echo "unknown")
                     ;;
                 fish)

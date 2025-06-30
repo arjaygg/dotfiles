@@ -38,6 +38,7 @@ declare -A DOTFILES_MAP=(
     ["$DOTFILES_ROOT/config/tmux/tmux.conf"]="$HOME/.tmux.conf"
     ["$DOTFILES_ROOT/config/starship/starship.toml"]="$HOME/.config/starship.toml"
     ["$DOTFILES_ROOT/config/atuin/config.toml"]="$HOME/.config/atuin/config.toml"
+    ["$DOTFILES_ROOT/config/broot/conf.hjson"]="$HOME/.config/broot/conf.hjson"
     ["$DOTFILES_ROOT/system/alacritty/alacritty.yml"]="$HOME/.config/alacritty/alacritty.yml"
     ["$DOTFILES_ROOT/system/i3/i3config"]="$HOME/.config/i3/config"
     

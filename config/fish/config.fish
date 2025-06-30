@@ -125,3 +125,8 @@ end
 if command -v atuin >/dev/null 2>&1
     atuin init fish | source
 end
+
+# Initialize broot if available
+if command -v broot >/dev/null 2>&1
+    source ~/.config/broot/launcher/fish/br 2>/dev/null || true
+end

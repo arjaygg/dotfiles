@@ -60,6 +60,11 @@ if command -v atuin >/dev/null 2>&1; then
     eval "$(atuin init bash)"
 fi
 
+# Initialize broot if available
+if command -v broot >/dev/null 2>&1; then
+    source ~/.config/broot/launcher/bash/br 2>/dev/null || true
+fi
+
 # FZF integration
 if command -v fzf >/dev/null 2>&1; then
     # Key bindings

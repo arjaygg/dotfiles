@@ -1,0 +1,242 @@
+# Broot Configuration
+# Interactive directory navigation and tree viewer
+
+# Default flags
+# show hidden files
+default_flags: "h"
+
+# Special paths
+# You can declare "special" paths
+special_paths: {
+    "/": "root"
+    "~": "home"
+    "/tmp": "temp"
+    "/home": "users"
+    "/mnt": "mount"
+    "/media": "media"
+    "/var/log": "logs"
+    "/usr/bin": "bin"
+    "/usr/local/bin": "local-bin"
+    "~/git": "git-repos"
+    "~/.config": "config"
+    "~/.local": "local"
+    "~/.dotfiles": "dotfiles"
+}
+
+# columns
+# set the maximum number of columns for tree display
+max_columns_count: 5
+
+# tree search
+# whether to show hidden files by default
+show_hidden: false
+
+# whether to respect gitignore
+respect_gitignore: true
+
+# syntax themes
+# You can choose the theme for syntax highlighting
+syntax_theme: "gruvbox-dark"
+
+# colors
+# Define colors for various file types
+file_style: {
+    ".git": { fg: "gray" }
+    ".gitignore": { fg: "gray" }
+    "target/": { fg: "gray" }
+    "node_modules/": { fg: "gray" }
+    "__pycache__/": { fg: "gray" }
+    ".pytest_cache/": { fg: "gray" }
+    ".cargo/": { fg: "gray" }
+    "Cargo.lock": { fg: "gray" }
+    "package-lock.json": { fg: "gray" }
+    "yarn.lock": { fg: "gray" }
+    "*.log": { fg: "yellow" }
+    "*.md": { fg: "blue" }
+    "*.rs": { fg: "orange" }
+    "*.py": { fg: "green" }
+    "*.js": { fg: "yellow" }
+    "*.ts": { fg: "blue" }
+    "*.json": { fg: "cyan" }
+    "*.toml": { fg: "purple" }
+    "*.yaml": { fg: "purple" }
+    "*.yml": { fg: "purple" }
+    "Dockerfile": { fg: "blue" }
+    "*.sh": { fg: "green" }
+    "*.fish": { fg: "cyan" }
+    "README*": { fg: "cyan", bold: true }
+    "LICENSE*": { fg: "white" }
+}
+
+# Icon theme (requires a Nerd Font)
+icon_theme: "vscode"
+
+# verbs
+# Define custom commands and shortcuts
+verbs: [
+    # Edit file with default editor
+    {
+        invocation: "edit"
+        key: "ctrl-e"
+        execution: "$EDITOR {file}"
+        leave_broot: true
+    }
+    
+    # Open file with default application
+    {
+        invocation: "open"
+        key: "ctrl-o"
+        execution: "xdg-open {file}"
+        leave_broot: false
+    }
+    
+    # Copy path to clipboard
+    {
+        invocation: "copy_path"
+        key: "ctrl-y"
+        execution: "echo -n {file} | xclip -selection clipboard"
+        leave_broot: false
+    }
+    
+    # Create new directory
+    {
+        invocation: "mkdir"
+        execution: "mkdir -p {directory}/{other}"
+        leave_broot: false
+    }
+    
+    # Create new file
+    {
+        invocation: "touch"
+        execution: "touch {directory}/{other}"
+        leave_broot: false
+    }
+    
+    # Delete file/directory (with confirmation)
+    {
+        invocation: "rm"
+        key: "delete"
+        execution: "rm -rf {file}"
+        leave_broot: false
+        confirm: true
+    }
+    
+    # Git status for directory
+    {
+        invocation: "git_status"
+        key: "ctrl-g"
+        execution: "cd {directory} && git status"
+        leave_broot: true
+    }
+    
+    # Git diff for file
+    {
+        invocation: "git_diff"
+        execution: "git diff {file}"
+        leave_broot: true
+    }
+    
+    # Show file with bat
+    {
+        invocation: "view"
+        key: "ctrl-v"
+        execution: "bat {file}"
+        leave_broot: true
+    }
+    
+    # Show file info
+    {
+        invocation: "info"
+        key: "ctrl-i"
+        execution: "file {file}"
+        leave_broot: false
+    }
+    
+    # Fuzzy find with fzf integration
+    {
+        invocation: "fzf"
+        key: "ctrl-f"
+        execution: "cd {directory} && fd --type f | fzf --preview 'bat --color=always {}' --bind 'enter:execute($EDITOR {})+abort'"
+        leave_broot: true
+    }
+]
+
+# search modes
+# Configure how search works
+search_modes: {
+    "fuzzy": "fuzzy"
+    "regex": "regex"
+    "exact": "exact"
+}
+
+# Skin (appearance)
+skin: {
+    default: "rgb(220, 220, 220) none"
+    tree: "rgb(136, 136, 136) none"
+    file: "rgb(220, 220, 220) none"
+    directory: "rgb(81, 151, 213) none bold"
+    exe: "rgb(200, 200, 0) none"
+    link: "rgb(144, 202, 249) none"
+    pruning: "rgb(136, 136, 136) none italic"
+    perm__: "rgb(136, 136, 136) none"
+    perm_r: "rgb(215, 153, 33) none"
+    perm_w: "rgb(204, 85, 85) none"
+    perm_x: "rgb(118, 191, 67) none"
+    owner: "rgb(136, 136, 136) none"
+    group: "rgb(136, 136, 136) none"
+    sparse: "rgb(250, 0, 104) none"
+    git_branch: "rgb(229, 192, 123) none"
+    git_insertions: "rgb(40, 161, 90) none"
+    git_deletions: "rgb(204, 85, 85) none"
+    git_status_current: "rgb(40, 161, 90) none"
+    git_status_modified: "rgb(229, 192, 123) none"
+    git_status_new: "rgb(40, 161, 90) none bold"
+    git_status_ignored: "rgb(136, 136, 136) none"
+    git_status_conflicted: "rgb(204, 85, 85) none"
+    git_status_other: "rgb(204, 85, 85) none"
+    selected_line: "none rgb(40, 40, 40)"
+    char_match: "rgb(229, 192, 123) none underlined"
+    content_match: "rgb(229, 192, 123) none underlined"
+    preview_title: "rgb(229, 192, 123) none bold"
+    preview: "rgb(220, 220, 220) rgb(40, 40, 40)"
+    preview_line_number: "rgb(136, 136, 136) none"
+    preview_match: "rgb(229, 192, 123) none underlined"
+    hex_null: "rgb(136, 136, 136) none"
+    hex_ascii_graphic: "rgb(215, 153, 33) none"
+    hex_ascii_whitespace: "rgb(136, 136, 136) none"
+    hex_ascii_other: "rgb(204, 85, 85) none"
+    hex_non_ascii: "rgb(229, 192, 123) none"
+    staging_area_title: "rgb(229, 192, 123) none bold"
+    command_error: "rgb(204, 85, 85) none"
+    count: "rgb(136, 136, 136) none"
+    dates: "rgb(136, 136, 136) none"
+    directory_sum: "rgb(136, 136, 136) none"
+    flag_label: "rgb(215, 153, 33) none"
+    flag_value: "rgb(215, 153, 33) none bold"
+    input: "rgb(220, 220, 220) none"
+    status_error: "rgb(204, 85, 85) none"
+    status_job: "rgb(81, 151, 213) none bold"
+    status_normal: "rgb(220, 220, 220) none"
+    status_italic: "rgb(229, 192, 123) none italic"
+    status_bold: "rgb(229, 192, 123) none bold"
+    status_code: "rgb(229, 192, 123) none"
+    status_ellipsis: "rgb(220, 220, 220) none"
+    purpose_normal: "rgb(220, 220, 220) none"
+    purpose_italic: "rgb(215, 153, 33) none italic"
+    purpose_bold: "rgb(215, 153, 33) none bold"
+    purpose_ellipsis: "rgb(220, 220, 220) none"
+    scrollbar_track: "rgb(80, 80, 80) none"
+    scrollbar_thumb: "rgb(136, 136, 136) none"
+    help_paragraph: "rgb(220, 220, 220) none"
+    help_bold: "rgb(229, 192, 123) none bold"
+    help_italic: "rgb(215, 153, 33) none italic"
+    help_code: "rgb(136, 136, 136) rgb(40, 40, 40)"
+    help_headers: "rgb(229, 192, 123) none bold"
+    help_table_border: "rgb(136, 136, 136) none"
+}
+
+# imports
+# Import custom configs (if they exist)
+imports: [
+    "~/.config/broot/local.hjson"
+]
