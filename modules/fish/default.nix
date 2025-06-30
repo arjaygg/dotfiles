@@ -3,16 +3,35 @@
   programs.fish = {
     enable = true;
     shellInit = ''
+      # Source shared dotfiles configuration first
+      if test -f ~/.dotfiles/config/shell/exports.fish
+          source ~/.dotfiles/config/shell/exports.fish
+      end
+      
+      # Local customizations
       if test -f ~/.localrc.fish
           source ~/.localrc.fish
       end
     '';
     interactiveShellInit = ''
-      # disable fish greeting
-      set fish_greeting
-      fish_config theme choose gruvbox
+      # Source shared aliases
+      if test -f ~/.dotfiles/config/shell/aliases.fish
+          source ~/.dotfiles/config/shell/aliases.fish
+      end
+      
+      # Fish-specific Nix integration
       fish_add_path -p ~/.nix-profile/bin /nix/var/nix/profiles/default/bin
       set -a fish_complete_path ~/.nix-profile/share/fish/completions/ ~/.nix-profile/share/fish/vendor_completions.d/
+      
+      # Disable fish greeting (set in shared config but ensure it's applied)
+      set fish_greeting
+      
+      # Theme configuration (can be overridden in local config)
+      if command -v fish_config >/dev/null 2>&1
+          fish_config theme choose gruvbox 2>/dev/null || true
+      end
+      
+      # Prompt colors (hydro theme if available)
       set hydro_color_pwd brcyan
       set hydro_color_git brmagenta
       set hydro_color_error brred
