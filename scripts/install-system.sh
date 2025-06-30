@@ -169,7 +169,25 @@ install_with_brew() {
     
     # Modern CLI tools
     log_info "Installing modern CLI tools..."
-    brew install bat eza fd ripgrep fzf starship git-delta gh lazygit atuin
+    for package in "${MODERN_CLI_PACKAGES[@]}"; do
+        case "$package" in
+            "fd-find")
+                if ! brew list "fd" &>/dev/null; then
+                    brew install "fd"
+                fi
+                ;;
+            "git-delta"|"delta")
+                if ! brew list "git-delta" &>/dev/null; then
+                    brew install "git-delta"
+                fi
+                ;;
+            *)
+                if ! brew list "$package" &>/dev/null; then
+                    brew install "$package" || log_warn "Failed to install $package via brew"
+                fi
+                ;;
+        esac
+    done
     
     # Optional packages
     log_info "Installing optional packages..."
