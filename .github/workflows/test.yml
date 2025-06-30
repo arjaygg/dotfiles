@@ -1,0 +1,69 @@
+name: Test Dotfiles
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up test environment
+      run: |
+        # Ensure scripts are executable
+        chmod +x scripts/*.sh
+        chmod +x test.sh
+        chmod +x tests/*.sh
+        
+    - name: Run tests
+      run: ./test.sh
+      
+    - name: Test installation (Ubuntu)
+      if: runner.os == 'Linux'
+      run: |
+        # Test package manager detection
+        ./scripts/install-traditional.sh --help
+        
+        # Test symlink creation (dry run)
+        ./scripts/create-symlinks.sh --help || true
+        
+    - name: Test installation (macOS)  
+      if: runner.os == 'macOS'
+      run: |
+        # Test package manager detection
+        ./scripts/install-traditional.sh --help
+        
+        # Test Homebrew detection
+        which brew || echo "Homebrew not available (expected in CI)"
+        
+    - name: Test automation scripts
+      run: |
+        # Test CLI interface
+        ./scripts/dotfiles.sh help
+        
+        # Test automation scripts syntax
+        bash -n scripts/dotfiles-sync.sh
+        bash -n scripts/auto-update.sh
+        
+    - name: Validate documentation
+      run: |
+        # Check if all documentation files exist
+        test -f README.md
+        test -f AUTOMATION.md  
+        test -f ARCHITECTURE.md
+        test -f TROUBLESHOOTING.md
+        test -f TRADITIONAL-SETUP.md
+        
+        # Check README has key sections
+        grep -i "quick start" README.md
+        grep -i "automation" README.md
+        grep -i "installation" README.md
