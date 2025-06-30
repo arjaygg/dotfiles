@@ -1,16 +1,32 @@
-# caarlos0/dotfiles
+# 🏠 Hybrid Dotfiles (Enhanced)
 
-This is my latest dotfiles generation.
+This is a modern, flexible dotfiles configuration supporting both Nix and traditional installation methods.
 
-I've been experimenting with many different tools to manage them properly, from
-Ansible to shell scripts, and never liked any of them that much, to be honest.
+Originally based on caarlos0/dotfiles, now enhanced with:
+- **🔀 Hybrid Architecture**: Choose between Nix or traditional package managers
+- **🐚 Smart Shell Selection**: Fish preferred with Bash fallback
+- **🌍 Cross-Platform Support**: macOS, Linux, WSL compatibility
+- **📦 Auto-Detection**: Intelligent environment analysis
+
+## 📚 Documentation
+
+- **[Hybrid Setup Guide](HYBRID-SETUP.md)** - Complete architecture overview
+- **[Shell Configuration Guide](SHELL-GUIDE.md)** - Shell selection and setup
+
+## ⚡ Quick Start (New Hybrid Method)
+
+```bash
+git clone https://github.com/arjaygg/dotfilesnixOS.git ~/.dotfiles
+cd ~/.dotfiles
+./install.sh  # Auto-detects best method (Nix or traditional)
+```
 
 You can see the history on these repositories:
 
 - [dotfiles.zsh](https://github.com/caarlos0/dotfiles.zsh)
 - [dotfiles.fish](https://github.com/caarlos0/dotfiles.fish)
 
-This is my most recent attempt, using nix.
+This configuration supports both the original Nix-focused approach and new hybrid methods.
 
 It contains **home-manager**, **nixOS** and **nix-darwin** configuration
 for several machines and VMs I use.
