@@ -1,6 +1,10 @@
 # Bash configuration for dotfiles (fallback shell)
 # This provides a minimal but functional Bash environment when Fish is not available
 
+# Fix locale to prevent warnings
+export LANG=C.UTF-8
+export LC_ALL=C.UTF-8
+
 # Source shared shell configurations
 if [[ -f "$HOME/.dotfiles/config/shell/exports.sh" ]]; then
     source "$HOME/.dotfiles/config/shell/exports.sh"
