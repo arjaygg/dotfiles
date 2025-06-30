@@ -112,6 +112,61 @@ setup_neovim() {
     fi
 }
 
+# Setup shell configurations
+setup_shell() {
+    log_info "Setting up shell configurations..."
+    
+    local shell="${PREFERRED_SHELL:-${DOTFILES_RECOMMENDED_SHELL:-bash}}"
+    
+    case "$shell" in
+        fish)
+            log_info "Setting up Fish shell configuration..."
+            
+            # Fish config
+            local fish_source="$DOTFILES_ROOT/config/fish/config.fish"
+            local fish_target="$HOME/.config/fish/config.fish"
+            if [[ -f "$fish_source" ]]; then
+                create_symlink "$fish_source" "$fish_target" "Fish configuration"
+            fi
+            
+            # Check if Fish is the default shell
+            if [[ "$SHELL" != *"fish" ]]; then
+                log_warn "Fish is not your default shell. To make it default, run:"
+                log_warn "  chsh -s \$(which fish)"
+            fi
+            ;;
+        bash)
+            log_info "Setting up Bash shell configuration..."
+            
+            # Bash config
+            local bash_source="$DOTFILES_ROOT/config/bash/bashrc"
+            local bash_target="$HOME/.bashrc"
+            if [[ -f "$bash_source" ]]; then
+                # For bash, we append to existing bashrc rather than replace
+                if [[ -f "$bash_target" ]]; then
+                    if ! grep -q "dotfiles integration" "$bash_target"; then
+                        cat >> "$bash_target" << EOF
+
+# Dotfiles integration
+if [[ -f "$bash_source" ]]; then
+    source "$bash_source"
+fi
+EOF
+                        log_success "Added dotfiles integration to existing .bashrc"
+                    else
+                        log_info "Dotfiles integration already exists in .bashrc"
+                    fi
+                else
+                    create_symlink "$bash_source" "$bash_target" "Bash configuration"
+                fi
+            fi
+            ;;
+        *)
+            log_warn "Unknown shell: $shell, skipping shell-specific setup"
+            ;;
+    esac
+}
+
 # Setup tool configurations
 setup_tools() {
     log_info "Setting up tool configurations..."
@@ -143,12 +198,23 @@ main() {
     log_info "Creating symlinks for dotfiles..."
     
     setup_git
+    setup_shell
     setup_tmux
     setup_neovim
     setup_tools
     
     log_success "Symlink creation completed!"
     log_info "All configurations are now linked to your dotfiles"
+    
+    # Show shell-specific next steps
+    local shell="${PREFERRED_SHELL:-${DOTFILES_RECOMMENDED_SHELL:-bash}}"
+    if [[ "$shell" == "fish" ]] && [[ "$SHELL" != *"fish" ]]; then
+        echo
+        log_info "To start using Fish as your default shell:"
+        log_info "  1. Run: chsh -s \$(which fish)"
+        log_info "  2. Restart your terminal"
+        log_info "  3. Or temporarily switch: exec fish"
+    fi
 }
 
 # Run main function if script is executed directly

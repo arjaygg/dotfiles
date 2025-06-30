@@ -168,7 +168,42 @@ prompt_user_info() {
         read -p "Enter your email for Git: " GIT_USER_EMAIL
     fi
     
-    export GIT_USER_NAME GIT_USER_EMAIL
+    # Shell preference
+    if [[ -z "${PREFERRED_SHELL:-}" ]]; then
+        echo
+        log_info "Shell Selection:"
+        log_info "Available shells: ${DOTFILES_AVAILABLE_SHELLS:-none}"
+        log_info "Recommended: ${DOTFILES_RECOMMENDED_SHELL:-bash} (${DOTFILES_SHELL_REASON:-})"
+        
+        if [[ "${DOTFILES_FISH_INSTALLABLE:-false}" == "true" ]]; then
+            echo "1) fish (recommended - modern shell with great features)"
+            echo "2) bash (fallback - universal compatibility)"
+            echo "3) auto (use recommended: ${DOTFILES_RECOMMENDED_SHELL:-bash})"
+            read -p "Choose your preferred shell [1-3, default: 3]: " shell_choice
+            
+            case "$shell_choice" in
+                1)
+                    PREFERRED_SHELL="fish"
+                    ;;
+                2)
+                    PREFERRED_SHELL="bash"
+                    ;;
+                3|"")
+                    PREFERRED_SHELL="${DOTFILES_RECOMMENDED_SHELL:-bash}"
+                    ;;
+                *)
+                    log_warn "Invalid choice, using recommended: ${DOTFILES_RECOMMENDED_SHELL:-bash}"
+                    PREFERRED_SHELL="${DOTFILES_RECOMMENDED_SHELL:-bash}"
+                    ;;
+            esac
+        else
+            log_warn "Fish shell cannot be easily installed in this environment"
+            log_info "Using fallback shell: ${DOTFILES_RECOMMENDED_SHELL:-bash}"
+            PREFERRED_SHELL="${DOTFILES_RECOMMENDED_SHELL:-bash}"
+        fi
+    fi
+    
+    export GIT_USER_NAME GIT_USER_EMAIL PREFERRED_SHELL
 }
 
 # Install using Nix method

@@ -1,0 +1,144 @@
+# Bash configuration for dotfiles (fallback shell)
+# This provides a minimal but functional Bash environment when Fish is not available
+
+# Source shared shell configurations
+if [[ -f "$HOME/.dotfiles/config/shell/exports.sh" ]]; then
+    source "$HOME/.dotfiles/config/shell/exports.sh"
+fi
+
+if [[ -f "$HOME/.dotfiles/config/shell/aliases.sh" ]]; then
+    source "$HOME/.dotfiles/config/shell/aliases.sh"
+fi
+
+# Bash-specific settings
+set -o vi  # Vi mode for command line editing
+
+# History settings
+export HISTCONTROL=ignoredups:erasedups
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
+
+# Append to history instead of overwriting
+shopt -s histappend
+
+# Check window size after each command
+shopt -s checkwinsize
+
+# Enable programmable completion
+if ! shopt -oq posix; then
+    if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+        source /usr/share/bash-completion/bash_completion
+    elif [[ -f /etc/bash_completion ]]; then
+        source /etc/bash_completion
+    fi
+fi
+
+# Custom prompt (simple but informative)
+if [[ -z "${STARSHIP_SHELL:-}" ]] && ! command -v starship >/dev/null 2>&1; then
+    # Fallback prompt if starship is not available
+    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+fi
+
+# Initialize starship if available
+if command -v starship >/dev/null 2>&1; then
+    eval "$(starship init bash)"
+fi
+
+# Initialize direnv if available
+if command -v direnv >/dev/null 2>&1; then
+    eval "$(direnv hook bash)"
+fi
+
+# Initialize zoxide if available
+if command -v zoxide >/dev/null 2>&1; then
+    eval "$(zoxide init bash)"
+fi
+
+# FZF integration
+if command -v fzf >/dev/null 2>&1; then
+    # Key bindings
+    if [[ -f /usr/share/fzf/key-bindings.bash ]]; then
+        source /usr/share/fzf/key-bindings.bash
+    elif [[ -f ~/.fzf.bash ]]; then
+        source ~/.fzf.bash
+    fi
+    
+    # Completion
+    if [[ -f /usr/share/fzf/completion.bash ]]; then
+        source /usr/share/fzf/completion.bash
+    fi
+fi
+
+# Bash-specific functions
+cdl() {
+    cd "$1" && ls
+}
+
+mkcd() {
+    mkdir -p "$1" && cd "$1"
+}
+
+# Extract function for various archive formats
+extract() {
+    if [[ -f $1 ]]; then
+        case $1 in
+            *.tar.bz2)   tar xjf "$1" ;;
+            *.tar.gz)    tar xzf "$1" ;;
+            *.bz2)       bunzip2 "$1" ;;
+            *.rar)       unrar x "$1" ;;
+            *.gz)        gunzip "$1" ;;
+            *.tar)       tar xf "$1" ;;
+            *.tbz2)      tar xjf "$1" ;;
+            *.tgz)       tar xzf "$1" ;;
+            *.zip)       unzip "$1" ;;
+            *.Z)         uncompress "$1" ;;
+            *.7z)        7z x "$1" ;;
+            *)           echo "'$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# Git prompt function (if git is available)
+if command -v git >/dev/null 2>&1; then
+    git_branch() {
+        git branch 2>/dev/null | grep '^*' | colrm 1 2
+    }
+    
+    git_status() {
+        local status
+        status=$(git status --porcelain 2>/dev/null)
+        if [[ -n "$status" ]]; then
+            echo "*"
+        fi
+    }
+fi
+
+# Network utilities
+myip() {
+    curl -s ifconfig.me || curl -s icanhazip.com || curl -s ipecho.net/plain
+}
+
+# System information
+sysinfo() {
+    echo "System Information:"
+    echo "=================="
+    echo "Hostname: $(hostname)"
+    echo "OS: $(uname -s)"
+    echo "Kernel: $(uname -r)"
+    echo "Architecture: $(uname -m)"
+    echo "Uptime: $(uptime -p 2>/dev/null || uptime)"
+    echo "Shell: $SHELL"
+    echo "User: $USER"
+    echo "Home: $HOME"
+    if command -v free >/dev/null 2>&1; then
+        echo "Memory: $(free -h | awk '/^Mem:/ {print $3 "/" $2}')"
+    fi
+}
+
+# Load any local customizations
+if [[ -f "$HOME/.bashrc.local" ]]; then
+    source "$HOME/.bashrc.local"
+fi

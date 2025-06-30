@@ -77,6 +77,59 @@ detect_package_managers() {
     fi
 }
 
+# Detect available shells and recommend default
+detect_shells() {
+    AVAILABLE_SHELLS=()
+    
+    # Check for available shells
+    for shell in fish zsh bash; do
+        if command -v "$shell" >/dev/null 2>&1; then
+            AVAILABLE_SHELLS+=("$shell")
+        fi
+    done
+    
+    # Determine recommended shell (Fish preferred, fallback to Bash)
+    if [[ " ${AVAILABLE_SHELLS[*]} " =~ " fish " ]]; then
+        RECOMMENDED_SHELL="fish"
+        SHELL_REASON="Fish is available and provides modern shell features"
+    elif [[ " ${AVAILABLE_SHELLS[*]} " =~ " zsh " ]]; then
+        RECOMMENDED_SHELL="zsh"
+        SHELL_REASON="Zsh is available and offers good compatibility"
+    elif [[ " ${AVAILABLE_SHELLS[*]} " =~ " bash " ]]; then
+        RECOMMENDED_SHELL="bash"
+        SHELL_REASON="Bash is the most universally available shell"
+    else
+        RECOMMENDED_SHELL="bash"
+        SHELL_REASON="Bash fallback (will be installed if needed)"
+    fi
+    
+    # Check if Fish can be installed in this environment
+    FISH_INSTALLABLE="true"
+    case "$OS" in
+        "Ubuntu"|"Debian")
+            if ! command -v apt >/dev/null 2>&1; then
+                FISH_INSTALLABLE="false"
+            fi
+            ;;
+        "macOS")
+            if ! command -v brew >/dev/null 2>&1; then
+                FISH_INSTALLABLE="false"
+            fi
+            ;;
+        "Arch Linux")
+            if ! command -v pacman >/dev/null 2>&1; then
+                FISH_INSTALLABLE="false"
+            fi
+            ;;
+        *)
+            # For unknown systems, assume Fish might not be easily installable
+            if [[ ! " ${PACKAGE_MANAGERS[*]} " =~ " nix " ]]; then
+                FISH_INSTALLABLE="false"
+            fi
+            ;;
+    esac
+}
+
 # Detect existing tools
 detect_existing_tools() {
     EXISTING_TOOLS=()
@@ -141,13 +194,19 @@ generate_report() {
 📋 SYSTEM INFORMATION:
    OS: $OS $OS_VERSION
    Architecture: $(uname -m)
-   Shell: $SHELL
+   Current Shell: $SHELL
    Home: $HOME
 
 📦 PACKAGE MANAGERS:
 $(printf '   %s\n' "${PACKAGE_MANAGERS[@]}")
 $(if [[ " ${PACKAGE_MANAGERS[*]} " =~ " nix " ]]; then echo "   Nix version: $NIX_VERSION"; fi)
 $(if [[ " ${PACKAGE_MANAGERS[*]} " =~ " brew " ]]; then echo "   Homebrew version: $BREW_VERSION"; fi)
+
+🐚 SHELL ENVIRONMENT:
+   Available Shells: ${AVAILABLE_SHELLS[*]:-none}
+   Recommended Shell: $RECOMMENDED_SHELL
+   Fish Installable: $FISH_INSTALLABLE
+   Reason: $SHELL_REASON
 
 🛠️  EXISTING TOOLS ($(echo "${EXISTING_TOOLS[@]}" | wc -w) found):
 $(printf '   %s\n' "${EXISTING_TOOLS[@]}")
@@ -173,6 +232,10 @@ export_env_vars() {
     export DOTFILES_EXISTING_TOOLS="${EXISTING_TOOLS[*]:-}"
     export DOTFILES_HOME_MANAGER="$HOME_MANAGER_AVAILABLE"
     export DOTFILES_RECOMMENDED_METHOD="$RECOMMENDED_METHOD"
+    export DOTFILES_AVAILABLE_SHELLS="${AVAILABLE_SHELLS[*]:-}"
+    export DOTFILES_RECOMMENDED_SHELL="$RECOMMENDED_SHELL"
+    export DOTFILES_FISH_INSTALLABLE="$FISH_INSTALLABLE"
+    export DOTFILES_SHELL_REASON="$SHELL_REASON"
 }
 
 # Main execution
@@ -181,6 +244,7 @@ main() {
     
     detect_os
     detect_package_managers
+    detect_shells
     detect_existing_tools
     detect_home_manager
     recommend_method
