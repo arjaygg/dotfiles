@@ -274,11 +274,16 @@ test_symlink_creation() {
     local test_home="$TEST_TMPDIR/test-home"
     mkdir -p "$test_home"
     
-    # Test symlink script with dry run (if supported)
-    if "$DOTFILES_ROOT/scripts/create-symlinks.sh" --help 2>/dev/null | grep -q "help"; then
-        test_pass "Symlink script has help function"
+    # Test symlink script has help function
+    local help_output
+    if help_output=$("$DOTFILES_ROOT/scripts/create-symlinks.sh" --help 2>&1); then
+        if echo "$help_output" | grep -qi "help\|usage"; then
+            test_pass "Symlink script has help function"
+        else
+            test_fail "Symlink creation" "Help output doesn't contain expected text: $help_output"
+        fi
     else
-        test_fail "Symlink creation" "Symlink script missing help or invalid"
+        test_fail "Symlink creation" "Help command failed with exit code $?"
     fi
 }
 
