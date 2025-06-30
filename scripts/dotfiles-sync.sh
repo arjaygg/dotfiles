@@ -104,10 +104,10 @@ update_tools() {
         brew update >/dev/null 2>&1
     fi
     
-    # Run traditional installer to ensure tools are present
-    if [[ -x "$DOTFILES_ROOT/scripts/install-traditional.sh" ]]; then
-        log_info "Running traditional installer for missing tools..."
-        "$DOTFILES_ROOT/scripts/install-traditional.sh" --update-only 2>/dev/null || true
+    # Run tools installer to ensure tools are present
+    if [[ -x "$DOTFILES_ROOT/scripts/install-tools.sh" ]]; then
+        log_info "Running tools installer for missing tools..."
+        "$DOTFILES_ROOT/scripts/install-tools.sh" --update-only 2>/dev/null || true
     fi
 }
 

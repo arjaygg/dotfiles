@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Traditional installation script for dotfiles
+# Tools installation script for dotfiles
 # Installs packages using system package managers
 
 set -euo pipefail
@@ -18,6 +18,55 @@ log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
 log_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+
+# Claude CLI installation function
+install_claude_cli() {
+    if command -v claude >/dev/null 2>&1; then
+        log_info "Claude CLI already installed"
+        return 0
+    fi
+
+    log_info "Installing Claude CLI..."
+    
+    # Try official installer first
+    if curl -fsSL https://claude.ai/cli/install.sh | sh; then
+        log_success "Claude CLI installed via official installer"
+        return 0
+    fi
+    
+    # Fallback: Try npm if available
+    if command -v npm >/dev/null 2>&1; then
+        if npm install -g @anthropic-ai/claude-cli 2>/dev/null; then
+            log_success "Claude CLI installed via npm"
+            return 0
+        fi
+    fi
+    
+    # Create local bin if needed and try direct download
+    mkdir -p "$HOME/.local/bin"
+    
+    # Add to PATH if not already there
+    if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+        export PATH="$HOME/.local/bin:$PATH"
+        
+        # Add to shell profile for persistence
+        local shell_rc=""
+        if [[ -n "${BASH_VERSION:-}" ]]; then
+            shell_rc="$HOME/.bashrc"
+        elif [[ -n "${ZSH_VERSION:-}" ]]; then
+            shell_rc="$HOME/.zshrc"
+        fi
+        
+        if [[ -n "$shell_rc" ]] && [[ -f "$shell_rc" ]]; then
+            if ! grep -q 'export PATH="$HOME/.local/bin:$PATH"' "$shell_rc"; then
+                echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$shell_rc"
+            fi
+        fi
+    fi
+    
+    log_warn "Could not install Claude CLI automatically. Please install manually:"
+    log_warn "curl -fsSL https://claude.ai/cli/install.sh | sh"
+}
 
 # Package lists
 ESSENTIAL_PACKAGES=(
@@ -113,6 +162,9 @@ install_with_brew() {
     # Optional packages
     log_info "Installing optional packages..."
     brew install neovim zsh htop tree jq yq kubectl
+    
+    # Install Claude CLI
+    install_claude_cli
     
     log_success "Homebrew installation completed"
 }
@@ -228,6 +280,9 @@ install_with_apt() {
         rm kubectl
     fi
     
+    # Install Claude CLI
+    install_claude_cli
+    
     log_success "APT installation completed"
 }
 
@@ -253,6 +308,9 @@ install_with_pacman() {
     # Optional packages
     log_info "Installing optional packages..."
     sudo pacman -S --noconfirm neovim zsh htop tree jq yq kubectl
+    
+    # Install Claude CLI
+    install_claude_cli
     
     log_success "Pacman installation completed"
 }
@@ -315,6 +373,9 @@ install_generic() {
         log_info "Installing Starship..."
         curl -sS https://starship.rs/install.sh | sh -s -- -y
     fi
+    
+    # Install Claude CLI
+    install_claude_cli
     
     log_success "Generic installation completed"
 }
