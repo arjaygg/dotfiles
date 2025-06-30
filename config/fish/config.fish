@@ -36,9 +36,10 @@ set -g fish_color_redirection magenta
 fish_add_path -g "$HOME/.local/bin"
 fish_add_path -g "$HOME/bin"
 
-# Language and locale - use C.UTF-8 for broader compatibility
-set -gx LANG C.UTF-8
-set -gx LC_ALL C.UTF-8
+# Language and locale - use C.utf8 (available locale)  
+set -gx LANG C.utf8
+set -gx LC_ALL C.utf8
+set -e LANGUAGE
 
 # Development environments
 if test -d "$HOME/go"

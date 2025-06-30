@@ -19,9 +19,10 @@ set -gx HISTFILESIZE 20000
 set -gx CLICOLOR 1
 set -gx LSCOLORS ExGxBxDxCxEgEdxbxgxcxd
 
-# Language and locale - use C.UTF-8 for broader compatibility
-set -gx LANG C.UTF-8
-set -gx LC_ALL C.UTF-8
+# Language and locale - use C.utf8 (available locale)
+set -gx LANG C.utf8
+set -gx LC_ALL C.utf8
+set -e LANGUAGE
 
 # Development paths and configurations
 set -gx GOPATH "$HOME/go"

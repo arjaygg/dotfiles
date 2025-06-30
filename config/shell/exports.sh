@@ -20,9 +20,10 @@ export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
 export CLICOLOR=1
 export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
 
-# Language and locale - use C.UTF-8 for broader compatibility
-export LANG=C.UTF-8
-export LC_ALL=C.UTF-8
+# Language and locale - use C.utf8 (available locale)
+export LANG=C.utf8
+export LC_ALL=C.utf8
+unset LANGUAGE
 
 # Development paths and configurations
 export GOPATH="$HOME/go"
