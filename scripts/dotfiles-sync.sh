@@ -84,8 +84,21 @@ update_dotfiles() {
     
     # Check for uncommitted changes
     if ! git diff-index --quiet HEAD --; then
-        log_warn "Uncommitted changes detected. Stashing..."
-        git stash push -m "Auto-stash before sync $(date)"
+        if [[ "$1" == "true" ]]; then
+            log_warn "Uncommitted changes detected. Auto-stashing..."
+            git stash push -m "Auto-stash before sync $(date)"
+        else
+            log_error "Repository has uncommitted changes. Please commit or stash your changes first:"
+            echo
+            git status --short
+            echo
+            log_info "To fix this, run one of:"
+            log_info "  git add -A && git commit -m 'your message'"
+            log_info "  git stash push -m 'your stash message'"
+            log_info "  git restore .  # to discard changes"
+            log_info "  dotfiles sync --auto-stash  # to enable legacy auto-stash behavior"
+            exit 1
+        fi
     fi
     
     # Fetch and pull latest changes
@@ -158,7 +171,13 @@ process_git_config() {
     if [[ -f "$git_template" ]]; then
         log_info "Processing git configuration..."
         
-        # Get git user info if not set
+        # Check if git config already has user info (processed template)
+        if [[ -f "$git_config" ]] && ! grep -q "{{NAME}}\|{{EMAIL}}" "$git_config" 2>/dev/null; then
+            log_info "Git configuration already processed, skipping template processing"
+            return 0
+        fi
+        
+        # Get git user info
         local git_name git_email
         git_name=$(git config --global user.name 2>/dev/null || echo "")
         git_email=$(git config --global user.email 2>/dev/null || echo "")
@@ -240,6 +259,7 @@ main() {
     local force_update=false
     local run_backup=true
     local skip_tools=false
+    local auto_stash=false
     
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -256,6 +276,10 @@ main() {
                 skip_tools=true
                 shift
                 ;;
+            --auto-stash)
+                auto_stash=true
+                shift
+                ;;
             --health-check-only)
                 health_check
                 exit $?
@@ -266,6 +290,7 @@ main() {
                 echo "  --force             Force update even if no changes"
                 echo "  --no-backup         Skip backing up existing configs"
                 echo "  --skip-tools        Skip tool updates"
+                echo "  --auto-stash        Auto-stash uncommitted changes (legacy behavior)"
                 echo "  --health-check-only Run only health checks"
                 echo "  --help              Show this help"
                 exit 0
@@ -288,7 +313,7 @@ main() {
     
     # Update repository
     local repo_updated=false
-    if update_dotfiles || [[ "$force_update" == true ]]; then
+    if update_dotfiles "$auto_stash" || [[ "$force_update" == true ]]; then
         repo_updated=true
     fi
     
