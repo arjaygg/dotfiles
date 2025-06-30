@@ -1,0 +1,153 @@
+# Atuin configuration
+# Enhanced shell history with sync and search capabilities
+
+## where to store your database, default is your system data directory
+## linux: ~/.local/share/atuin/history.db
+## macOS: ~/Library/Application Support/atuin/history.db
+# db_path = "~/.history.db"
+
+## where to store your encryption key, default is your system data directory
+# key_path = "~/.key"
+
+## where to store your auth session token, default is your system data directory  
+# session_path = "~/.session"
+
+## date format used, either "us" or "iso"
+# dialect = "us"
+
+## enable or disable automatic sync
+auto_sync = true
+
+## enable or disable automatic update checks
+update_check = true
+
+## address of the sync server
+sync_address = "https://api.atuin.sh"
+
+## how often to sync history. note that this is only triggered on a shell command
+## being run, so is not a secure way to hide secrets.
+## set it to 0 to sync after every command
+sync_frequency = "10m"
+
+## which search mode to use
+## possible values: prefix, fulltext, fuzzy, skim
+search_mode = "fuzzy"
+
+## which filter mode to use
+## possible values: global, host, session, directory
+filter_mode = "global"
+
+## which style to use
+## possible values: auto, full, compact
+style = "auto"
+
+## the maximum number of lines to show in interactive mode
+max_preview_height = 4
+
+## whether or not to show the help row, which includes the current filter mode and ctrl-c
+show_help = true
+
+## whether or not to show the current filter mode indicator
+show_tabs = true
+
+## exit code of the command run
+exit_mode = "return-query"
+
+## prevent commands matching any of these regexes from being written to history.
+## Note that these regular expressions are unanchored, i.e. if they don't start
+## with ^ or end with $, they'll match anywhere in the command.
+## For details about the supported regular expression syntax, see
+## https://docs.rs/regex/latest/regex/#syntax
+history_filter = [
+   "^secret-cmd",
+   "^.*password.*"
+]
+
+## prevent commands run with cwd matching any of these regexes from being written
+## to history. Note that these regular expressions are unanchored, i.e. if they don't
+## start with ^ or end with $, they'll match anywhere in CWD.
+## For details about the supported regular expression syntax, see
+## https://docs.rs/regex/latest/regex/#syntax
+cwd_filter = [
+   "^/very/secret/area"
+]
+
+## Configure the maximum height of the preview to show.
+## Useful when you have long scripts in your history that you want to distinguish
+## by more than the first few characters.
+# max_preview_height = 4
+
+## Configure whether or not to show the preview of the selected command
+## Useful when the preview is taking up too much space, or when you do not want to
+## show private information in the preview.
+# show_preview = true
+
+## Configure whether or not to show the help text for the interactive selector
+# show_help = true
+
+## Invert the UI - put the search bar at the top, and the results below
+# invert = false
+
+## The maximum number of results to show in the interactive selector
+# max_results = 10000
+
+## Configure the timeout (in milliseconds) between keystrokes before accepting the search
+# keymap_timeout = 0
+
+## Configure the keys to accept the search
+# keymap_mode = "emacs"
+
+# UI Configuration
+[ui]
+# Show user information in the status bar
+show_user = true
+
+# Show host information in the status bar  
+show_host = true
+
+# Show exit code in the status bar
+show_exit = true
+
+# Show duration in the status bar
+show_duration = true
+
+# Show timestamp in the status bar
+show_time = true
+
+# Stats Configuration
+[stats]
+# Common prefixes to show in stats
+common_prefix = ["git", "sudo", "docker"]
+
+# Common subcommands to show in stats
+common_subcommands = ["ls", "cd", "git", "vim", "cat"]
+
+# Daemon Configuration
+[daemon]
+# Enable the daemon
+enabled = true
+
+# Socket path for the daemon
+# socket_path = "~/.atuin.sock"
+
+# Systemd socket activation
+# systemd_socket = false
+
+# Key bindings
+[keys]
+# Key to open the search UI
+ctrl_r = "search"
+
+# Key to navigate up in search results
+up = "previous"
+
+# Key to navigate down in search results  
+down = "next"
+
+# Privacy settings
+[privacy]
+# Share anonymous usage data
+# stats = false
+
+# Share command line history (anonymized)
+# history = false
