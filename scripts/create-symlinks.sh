@@ -19,16 +19,15 @@ log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 # Configuration mapping
-declare -A SYMLINK_MAP=(
-    ["config/bash/bashrc"]="$HOME/.bashrc"
-    ["config/fish/config.fish"]="$HOME/.config/fish/config.fish"
-    ["config/git/gitignore_global"]="$HOME/.gitignore_global"
-    ["config/tmux/tmux.conf"]="$HOME/.tmux.conf"
-    ["system/alacritty/alacritty.yml"]="$HOME/.config/alacritty/alacritty.yml"
-    ["system/i3/i3config"]="$HOME/.config/i3/config"
-    ["config/shell/aliases.sh"]="$HOME/.aliases"
-    ["config/shell/exports.sh"]="$HOME/.exports"
-)
+declare -A SYMLINK_MAP
+SYMLINK_MAP["config/bash/bashrc"]="$HOME/.bashrc"
+SYMLINK_MAP["config/fish/config.fish"]="$HOME/.config/fish/config.fish"
+SYMLINK_MAP["config/git/gitignore_global"]="$HOME/.gitignore_global"
+SYMLINK_MAP["config/tmux/tmux.conf"]="$HOME/.tmux.conf"
+SYMLINK_MAP["system/alacritty/alacritty.yml"]="$HOME/.config/alacritty/alacritty.yml"
+SYMLINK_MAP["system/i3/i3config"]="$HOME/.config/i3/config"
+SYMLINK_MAP["config/shell/aliases.sh"]="$HOME/.aliases"
+SYMLINK_MAP["config/shell/exports.sh"]="$HOME/.exports"
 
 # Create symlink
 create_symlink() {
