@@ -34,9 +34,10 @@ install_claude_cli() {
         return 0
     fi
     
-    # Fallback: Try npm if available
+    # Fallback: Try npm if available (correct package name)
     if command -v npm >/dev/null 2>&1; then
-        if npm install -g @anthropic-ai/claude-cli 2>/dev/null; then
+        log_warn "Official installer failed, trying npm installation..."
+        if npm install -g @anthropic-ai/claude-code 2>/dev/null; then
             log_success "Claude CLI installed via npm"
             return 0
         fi
@@ -65,7 +66,7 @@ install_claude_cli() {
     fi
     
     log_warn "Could not install Claude CLI automatically. Please install manually:"
-    log_warn "curl -fsSL https://claude.ai/cli/install.sh | sh"
+    log_warn "npm install -g @anthropic-ai/claude-code"
 }
 
 # Package lists
@@ -620,6 +621,18 @@ check_repo_state() {
     fi
 }
 
+# Create dotfiles symlink for bashrc compatibility
+create_dotfiles_symlink() {
+    # Create ~/.dotfiles symlink if it doesn't exist or points to wrong location
+    if [[ ! -L "$HOME/.dotfiles" ]] || [[ "$(readlink "$HOME/.dotfiles" 2>/dev/null)" != "$DOTFILES_ROOT" ]]; then
+        log_info "Creating ~/.dotfiles symlink for shell compatibility..."
+        ln -sf "$DOTFILES_ROOT" "$HOME/.dotfiles"
+        log_success "Created symlink: ~/.dotfiles -> $DOTFILES_ROOT"
+    else
+        log_info "~/.dotfiles symlink already exists and is correct"
+    fi
+}
+
 # Main installation function
 main() {
     local method=""
@@ -627,6 +640,9 @@ main() {
     
     # Check repository state first
     check_repo_state
+    
+    # Create dotfiles symlink early so paths work correctly
+    create_dotfiles_symlink
     
     # Parse arguments
     while [[ $# -gt 0 ]]; do
