@@ -201,10 +201,9 @@ install_with_brew() {
         log_info "Installing Fisher plugin manager for Fish..."
         fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher" 2>/dev/null || log_warn "Fisher installation failed - can be installed manually later"
         
-        # Install Fish prompt plugins
-        log_info "Installing Fish prompt plugins (Tide + Hydro)..."
-        fish -c "fisher install IlanCosman/tide@v6" 2>/dev/null || log_warn "Tide installation failed - can be installed manually later"
-        fish -c "fisher install jorgebucaran/hydro" 2>/dev/null || log_warn "Hydro installation failed - can be installed manually later"
+        # Use fisher update to install from fish_plugins file
+        log_info "Installing Fish plugins from fish_plugins file..."
+        fish -c "fisher update" 2>/dev/null || log_warn "Fish plugin installation failed - can be installed manually later"
     fi
     
     log_success "Homebrew installation completed"
@@ -433,10 +432,9 @@ install_with_apt() {
         log_info "Installing Fisher plugin manager for Fish..."
         fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher" 2>/dev/null || log_warn "Fisher installation failed - can be installed manually later"
         
-        # Install Fish prompt plugins
-        log_info "Installing Fish prompt plugins (Tide + Hydro)..."
-        fish -c "fisher install IlanCosman/tide@v6" 2>/dev/null || log_warn "Tide installation failed - can be installed manually later"
-        fish -c "fisher install jorgebucaran/hydro" 2>/dev/null || log_warn "Hydro installation failed - can be installed manually later"
+        # Use fisher update to install from fish_plugins file
+        log_info "Installing Fish plugins from fish_plugins file..."
+        fish -c "fisher update" 2>/dev/null || log_warn "Fish plugin installation failed - can be installed manually later"
     fi
     
     log_success "APT installation completed"
@@ -473,10 +471,9 @@ install_with_pacman() {
         log_info "Installing Fisher plugin manager for Fish..."
         fish -c "curl -sL https://git.io/fisher | source && fisher install jorgebucaran/fisher" 2>/dev/null || log_warn "Fisher installation failed - can be installed manually later"
         
-        # Install Fish prompt plugins
-        log_info "Installing Fish prompt plugins (Tide + Hydro)..."
-        fish -c "fisher install IlanCosman/tide@v6" 2>/dev/null || log_warn "Tide installation failed - can be installed manually later"
-        fish -c "fisher install jorgebucaran/hydro" 2>/dev/null || log_warn "Hydro installation failed - can be installed manually later"
+        # Use fisher update to install from fish_plugins file
+        log_info "Installing Fish plugins from fish_plugins file..."
+        fish -c "fisher update" 2>/dev/null || log_warn "Fish plugin installation failed - can be installed manually later"
     fi
     
     log_success "Pacman installation completed"
