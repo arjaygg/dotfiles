@@ -230,12 +230,62 @@ cleanup_apt_state() {
     sudo apt update
 }
 
+# Setup modern tool repositories for APT
+setup_modern_repositories() {
+    log_info "Setting up modern tool repositories..."
+    
+    # Ensure software-properties-common is installed for add-apt-repository
+    sudo apt install -y software-properties-common
+    
+    # Fish Shell PPA - for latest Fish shell v4.x
+    if ! grep -q "fish-shell/release-4" /etc/apt/sources.list.d/* 2>/dev/null; then
+        log_info "Adding Fish shell v4.x PPA..."
+        sudo add-apt-repository -y ppa:fish-shell/release-4
+    fi
+    
+    # Neovim PPA - for latest stable Neovim
+    if ! grep -q "neovim-ppa/stable" /etc/apt/sources.list.d/* 2>/dev/null; then
+        log_info "Adding Neovim stable PPA..."
+        sudo add-apt-repository -y ppa:neovim-ppa/stable
+    fi
+    
+    # Git PPA - for latest Git (especially important on older Ubuntu)
+    if ! grep -q "git-core/ppa" /etc/apt/sources.list.d/* 2>/dev/null; then
+        log_info "Adding Git PPA for latest version..."
+        sudo add-apt-repository -y ppa:git-core/ppa
+    fi
+    
+    # NodeSource repository - for latest Node.js and npm
+    if ! command -v node >/dev/null 2>&1 && ! grep -q "deb.nodesource.com" /etc/apt/sources.list.d/* 2>/dev/null; then
+        log_info "Adding NodeSource repository for latest Node.js..."
+        # Remove any conflicting packages first
+        sudo apt remove -y nodejs npm 2>/dev/null || true
+        sudo apt autoremove -y 2>/dev/null || true
+        
+        # Add NodeSource repository
+        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    fi
+    
+    # GitHub CLI repository - for latest gh
+    if ! command -v gh >/dev/null 2>&1 && ! grep -q "cli.github.com" /etc/apt/sources.list.d/* 2>/dev/null; then
+        log_info "Adding GitHub CLI repository..."
+        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+    fi
+    
+    # Update package lists after adding repositories
+    sudo apt update
+}
+
 # Install packages with APT (Ubuntu/Debian)
 install_with_apt() {
     log_info "Installing packages with APT..."
     
     # Clean up any existing issues first
     cleanup_apt_state
+    
+    # Setup modern repositories for latest versions
+    setup_modern_repositories
     
     # Essential packages
     log_info "Installing essential packages..."
@@ -248,21 +298,9 @@ install_with_apt() {
     sudo apt --fix-broken install -y 2>/dev/null || true
     sudo dpkg --configure -a 2>/dev/null || true
     
-    # Handle nodejs/npm conflicts
-    if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
-        log_info "Setting up Node.js and npm..."
-        
-        # Remove any conflicting packages
-        sudo apt remove -y nodejs npm 2>/dev/null || true
-        sudo apt autoremove -y 2>/dev/null || true
-        
-        # Clean package cache
-        sudo apt clean
-        sudo apt update
-        
-        # Install Node.js from NodeSource
-        log_info "Installing Node.js from NodeSource..."
-        curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    # Install Node.js and npm (repository already set up in setup_modern_repositories)
+    if ! command -v node >/dev/null 2>&1; then
+        log_info "Installing Node.js and npm..."
         sudo apt install -y nodejs
     else
         log_info "Node.js and npm already installed"
@@ -289,9 +327,24 @@ install_with_apt() {
     # Modern CLI tools (some need to be installed manually)
     log_info "Installing modern CLI tools..."
     
-    # bat (install via snap or deb)
+    # bat (prefer newer version from GitHub releases if Ubuntu version is too old)
     if ! command -v bat >/dev/null 2>&1; then
-        sudo apt install -y bat
+        # Check Ubuntu version - if it's 20.04 or older, install from GitHub releases
+        if [[ -f /etc/os-release ]]; then
+            . /etc/os-release
+            if [[ "$VERSION_ID" < "22.04" ]]; then
+                log_info "Installing bat from GitHub releases for newer version..."
+                BAT_VERSION=$(curl -s https://api.github.com/repos/sharkdp/bat/releases/latest | grep '"tag_name"' | cut -d'"' -f4)
+                wget "https://github.com/sharkdp/bat/releases/download/${BAT_VERSION}/bat_${BAT_VERSION#v}_amd64.deb"
+                sudo dpkg -i "bat_${BAT_VERSION#v}_amd64.deb"
+                rm "bat_${BAT_VERSION#v}_amd64.deb"
+            else
+                sudo apt install -y bat
+            fi
+        else
+            sudo apt install -y bat
+        fi
+        
         # Create symlink if installed as batcat
         if command -v batcat >/dev/null 2>&1 && ! command -v bat >/dev/null 2>&1; then
             mkdir -p ~/.local/bin
@@ -332,11 +385,8 @@ install_with_apt() {
         curl -sS https://starship.rs/install.sh | sh -s -- -y
     fi
     
-    # gh (GitHub CLI)
+    # gh (GitHub CLI) - repository already set up in setup_modern_repositories
     if ! command -v gh >/dev/null 2>&1; then
-        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-        sudo apt update
         sudo apt install -y gh
     fi
     
@@ -358,7 +408,7 @@ install_with_apt() {
         fi
     fi
     
-    # Optional packages
+    # Optional packages (repositories already set up in setup_modern_repositories)
     log_info "Installing optional packages..."
     sudo apt install -y neovim zsh htop tree jq
     
