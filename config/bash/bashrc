@@ -7,12 +7,12 @@ export LC_ALL=C.utf8
 unset LANGUAGE
 
 # Source shared shell configurations
-if [[ -f "$HOME/.dotfiles/config/shell/exports.sh" ]]; then
-    source "$HOME/.dotfiles/config/shell/exports.sh"
+if [[ -f "$HOME/git/dotfiles/config/shell/exports.sh" ]]; then
+    source "$HOME/git/dotfiles/config/shell/exports.sh"
 fi
 
-if [[ -f "$HOME/.dotfiles/config/shell/aliases.sh" ]]; then
-    source "$HOME/.dotfiles/config/shell/aliases.sh"
+if [[ -f "$HOME/git/dotfiles/config/shell/aliases.sh" ]]; then
+    source "$HOME/git/dotfiles/config/shell/aliases.sh"
 fi
 
 # Bash-specific settings

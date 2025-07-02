@@ -5,7 +5,7 @@
 alias .. 'cd ..'
 alias ... 'cd ../..'
 alias .... 'cd ../../..'
-alias ~ 'cd ~'
+alias home 'cd ~'
 
 # List files
 if command -v eza >/dev/null 2>&1
@@ -70,7 +70,7 @@ alias tml 'tmux list-sessions'
 
 # Quick commands
 alias reload 'source ~/.config/fish/config.fish'
-alias path 'echo $PATH | tr ":" "\n"'
+alias path 'echo $PATH | tr ":" "\\n"'
 alias h 'history'
 alias j 'jobs'
 alias c 'clear'
