@@ -80,7 +80,16 @@ if command -v direnv >/dev/null 2>&1
     direnv hook fish | source
 end
 
+if command -v atuin >/dev/null 2>&1
+    atuin init fish | source
+end
+
 # Fisher plugins installed:
 # - IlanCosman/tide@v6      # Modern, fast prompt
 # - PatrickF1/fzf.fish      # Fuzzy finder integration
 # - jethrokuan/z            # Directory jumping
+
+# Additional tools integrated:
+# - atuin                   # Enhanced shell history with sync
+# - zoxide                  # Smarter cd command
+# - direnv                  # Directory-specific environment variables
