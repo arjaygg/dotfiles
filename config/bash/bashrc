@@ -131,10 +131,7 @@ if command -v git >/dev/null 2>&1; then
     }
 fi
 
-# Network utilities
-myip() {
-    curl -s ifconfig.me || curl -s icanhazip.com || curl -s ipecho.net/plain
-}
+# Network utilities (using alias from dotfiles)
 
 # System information
 sysinfo() {
