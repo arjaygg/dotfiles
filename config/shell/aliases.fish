@@ -70,7 +70,7 @@ alias tml 'tmux list-sessions'
 
 # Quick commands
 alias reload 'source ~/.config/fish/config.fish'
-alias path 'echo $PATH | tr ":" "\\n"'
+alias pathlist 'string split : $PATH'
 alias h 'history'
 alias j 'jobs'
 alias c 'clear'

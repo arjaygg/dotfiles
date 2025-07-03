@@ -1,164 +1,86 @@
-# Fish shell configuration for dotfiles
-# This config prioritizes Fish features while maintaining compatibility
+# Minimal Fish shell configuration
+# Start simple and build up gradually
 
-# Fisher plugin manager is installed via system install scripts
-# Use 'fisher update' to install plugins from fish_plugins file
+# Disable greeting message
+set -g fish_greeting ""
 
-# Source shared shell configurations
-if test -f "$HOME/.dotfiles/config/shell/exports.fish"
-    source "$HOME/.dotfiles/config/shell/exports.fish"
-end
-
-if test -f "$HOME/.dotfiles/config/shell/aliases.fish"
-    source "$HOME/.dotfiles/config/shell/aliases.fish"
-end
-
-# Fish-specific settings
-set -g fish_greeting ""  # Disable greeting message
-
-# Set default editor
+# Basic environment variables
 set -gx EDITOR nvim
 set -gx VISUAL $EDITOR
 
-# History settings
-set -g fish_history_max 10000
+# Essential PATH additions
+fish_add_path -g "$HOME/.local/bin"
+fish_add_path -g "$HOME/bin"
 
-# Colors and theme
+# Basic colors
 set -g fish_color_command blue
 set -g fish_color_param normal
 set -g fish_color_comment brblack
 set -g fish_color_error red
-set -g fish_color_operator cyan
-set -g fish_color_quote yellow
-set -g fish_color_redirection magenta
 
-# Path modifications
-fish_add_path -g "$HOME/.local/bin"
-fish_add_path -g "$HOME/bin"
-
-# Language and locale - use C.utf8 (available locale)  
-set -gx LANG C.utf8
-set -gx LC_ALL C.utf8
-set -e LANGUAGE
-
-# Development environments
-if test -d "$HOME/go"
-    set -gx GOPATH "$HOME/go"
-    set -gx GOBIN "$GOPATH/bin"
-    fish_add_path -g "$GOBIN"
-end
-
+# Essential development paths
 if test -d "$HOME/.cargo"
-    set -gx CARGO_HOME "$HOME/.cargo"
-    fish_add_path -g "$CARGO_HOME/bin"
+    fish_add_path -g "$HOME/.cargo/bin"
 end
 
 if test -d "$HOME/.npm-global"
-    set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
-    fish_add_path -g "$NPM_CONFIG_PREFIX/bin"
+    fish_add_path -g "$HOME/.npm-global/bin"
 end
 
-# Platform-specific configurations
+if test -d "$HOME/go"
+    set -gx GOPATH "$HOME/go"
+    fish_add_path -g "$HOME/go/bin"
+end
+
+# Platform-specific essentials
 switch (uname)
-case Darwin
-    # macOS specific
-    set -gx HOMEBREW_NO_ANALYTICS 1
-    set -gx HOMEBREW_NO_INSECURE_REDIRECT 1
-    
-    # Add Homebrew to path
-    if test -d "/opt/homebrew"
-        fish_add_path -g "/opt/homebrew/bin"
-        fish_add_path -g "/opt/homebrew/sbin"
-    else if test -d "/usr/local/Homebrew"
-        fish_add_path -g "/usr/local/bin"
-        fish_add_path -g "/usr/local/sbin"
-    end
 case Linux
-    # Linux specific
     set -gx XDG_CONFIG_HOME "$HOME/.config"
     set -gx XDG_DATA_HOME "$HOME/.local/share"
     set -gx XDG_CACHE_HOME "$HOME/.cache"
-end
-
-# Nix integration
-if command -v nix >/dev/null 2>&1
-    if test -d "$HOME/.nix-profile"
-        fish_add_path -g "$HOME/.nix-profile/bin"
-    end
-    
-    if test -d "/nix/var/nix/profiles/default"
-        fish_add_path -g "/nix/var/nix/profiles/default/bin"
+case Darwin
+    set -gx HOMEBREW_NO_ANALYTICS 1
+    if test -d "/opt/homebrew"
+        fish_add_path -g "/opt/homebrew/bin"
     end
 end
 
-# Tool-specific configurations
-if command -v bat >/dev/null 2>&1
-    set -gx BAT_THEME "gruvbox-dark"
-    set -gx BAT_STYLE "numbers,changes,header"
+# Essential aliases
+alias ll='ls -la'
+alias la='ls -A'
+alias l='ls -CF'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias grep='grep --color=auto'
+alias home='cd ~'
+alias myip='curl -s ifconfig.me'
+
+# Git aliases
+alias gs='git status'
+alias ga='git add'
+alias gc='git commit'
+alias gp='git push'
+alias gl='git log --oneline'
+
+# Source shared shell configurations (if they exist)
+if test -f "$HOME/git/dotfiles/config/shell/exports.fish"
+    source "$HOME/git/dotfiles/config/shell/exports.fish"
 end
 
-if command -v fzf >/dev/null 2>&1
-    set -gx FZF_DEFAULT_COMMAND 'fd --type f --hidden --follow --exclude .git'
-    set -gx FZF_CTRL_T_COMMAND "$FZF_DEFAULT_COMMAND"
-    set -gx FZF_ALT_C_COMMAND 'fd --type d --hidden --follow --exclude .git'
-    set -gx FZF_DEFAULT_OPTS '--height 40% --layout=reverse --border'
+if test -f "$HOME/git/dotfiles/config/shell/aliases.fish"
+    source "$HOME/git/dotfiles/config/shell/aliases.fish"
 end
 
-# Git configuration
-set -gx GIT_EDITOR "$EDITOR"
-
-# GPG configuration
-set -gx GPG_TTY (tty)
-
-# Prompt configuration - Tide is default, Hydro available as alternative
-# Use 'dotfiles prompt tide' or 'dotfiles prompt hydro' to switch
-set -g DOTFILES_FISH_PROMPT (cat ~/.config/fish/.prompt_choice 2>/dev/null || echo "tide")
-
-switch "$DOTFILES_FISH_PROMPT"
-case "hydro"
-    # Hydro prompt - ultra-fast and minimal
-    if functions -q hydro_prompt
-        # Hydro is already loaded
-    else
-        echo "Hydro prompt not found. Run: fisher install jorgebucaran/hydro"
-    end
-case "tide" 
-    # Tide prompt - feature-rich with async rendering (default)
-    if functions -q tide
-        # Tide is already loaded
-    else
-        echo "Tide prompt not found. Run: fisher install IlanCosman/tide@v6"
-    end
-case "starship"
-    # Fallback to starship if available
-    if command -v starship >/dev/null 2>&1
-        starship init fish | source
-    end
-case "*"
-    # Default to tide
-    if functions -q tide
-        # Tide is loaded
-    else if command -v starship >/dev/null 2>&1
-        starship init fish | source
-    end
-end
-
-# Initialize zoxide if available
+# Tool integrations
 if command -v zoxide >/dev/null 2>&1
     zoxide init fish | source
 end
 
-# Initialize direnv if available
 if command -v direnv >/dev/null 2>&1
     direnv hook fish | source
 end
 
-# Initialize atuin if available
-if command -v atuin >/dev/null 2>&1
-    atuin init fish | source
-end
-
-# Initialize broot if available
-if command -v broot >/dev/null 2>&1
-    source ~/.config/broot/launcher/fish/br 2>/dev/null || true
-end
+# Fisher plugins installed:
+# - IlanCosman/tide@v6      # Modern, fast prompt
+# - PatrickF1/fzf.fish      # Fuzzy finder integration
+# - jethrokuan/z            # Directory jumping
