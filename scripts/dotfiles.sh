@@ -108,7 +108,10 @@ show_status() {
                 nvim)
                     version=$(nvim --version 2>/dev/null | head -1 | awk '{print $2}' || echo "unknown")
                     ;;
-                bat|eza|fd|rg|fzf|gh|lazygit|atuin|broot)
+                fzf)
+                    version=$(command "$tool" --version 2>/dev/null | head -1 | awk '{print $1}' || echo "unknown")
+                    ;;
+                bat|eza|fd|rg|gh|lazygit|atuin|broot)
                     version=$(command "$tool" --version 2>/dev/null | head -1 | awk '{print $NF}' || echo "unknown")
                     ;;
                 fish)

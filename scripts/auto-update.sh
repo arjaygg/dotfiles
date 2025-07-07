@@ -151,6 +151,26 @@ update_manual_tools() {
         log_success "Starship updated"
     fi
     
+    # Update fzf
+    if [[ -d "$HOME/.fzf" ]]; then
+        log_info "Updating fzf..."
+        cd "$HOME/.fzf"
+        local current_commit=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+        git pull origin master >/dev/null 2>&1
+        local new_commit=$(git rev-parse HEAD 2>/dev/null || echo "unknown")
+        
+        if [[ "$current_commit" != "$new_commit" ]]; then
+            # Reinstall to update binaries and shell integration
+            ./install --all --no-update-rc >/dev/null 2>&1
+            log_success "fzf updated to latest version"
+        else
+            log_info "fzf already up to date"
+        fi
+        cd - >/dev/null
+    elif command -v fzf >/dev/null 2>&1; then
+        log_warn "fzf found but not installed via git. Consider reinstalling with: git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install"
+    fi
+    
     # Update eza if installed manually
     if command -v eza >/dev/null 2>&1 && [[ ! -f /usr/bin/eza ]]; then
         log_info "Checking eza updates..."

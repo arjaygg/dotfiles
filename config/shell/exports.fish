@@ -101,7 +101,9 @@ if command -v fzf >/dev/null 2>&1
 end
 
 if command -v rg >/dev/null 2>&1
-    set -gx RIPGREP_CONFIG_PATH "$HOME/.config/ripgrep/config"
+    if test -f "$HOME/.config/ripgrep/config"
+        set -gx RIPGREP_CONFIG_PATH "$HOME/.config/ripgrep/config"
+    end
 end
 
 # Git configuration

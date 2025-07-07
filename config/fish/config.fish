@@ -84,6 +84,20 @@ if command -v atuin >/dev/null 2>&1
     atuin init fish | source
 end
 
+# FZF configuration
+if command -v fzf >/dev/null 2>&1
+    # Set FZF environment variables
+    set -gx FZF_DEFAULT_OPTS '--height 40% --layout=reverse --border'
+    
+    # Manual key bindings that actually work
+    bind \ct '_fzf_search_directory'
+    bind \cr '_fzf_search_history'
+    bind \cs '_fzf_search_git_status'
+    bind \cg '_fzf_search_git_log'
+    bind \cp '_fzf_search_processes'
+    bind \cv '_fzf_search_variables'
+end
+
 # Fisher plugins installed:
 # - IlanCosman/tide@v6      # Modern, fast prompt
 # - PatrickF1/fzf.fish      # Fuzzy finder integration
