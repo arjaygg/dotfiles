@@ -2,3 +2,5 @@ result
 dist
 .direnv/
 .claude/
+claude_hook_monitor.log
+*.log
