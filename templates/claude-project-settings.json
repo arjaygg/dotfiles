@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-filesystem"],
+      "env": {
+        "ALLOWED_DIRECTORIES": "{{ PROJECT_ROOT }}"
+      }
+    },
+    "sqlite": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-sqlite", "{{ PROJECT_ROOT }}/database.db"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-github"],
+      "env": {
+        "GITHUB_TOKEN": "{{ GITHUB_TOKEN }}"
+      }
+    }
+  }
+}

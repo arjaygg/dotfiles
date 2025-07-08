@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": ["*"],
+    "deny": []
+  },
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1"
+  },
+  "cleanupPeriodDays": 30,
+  "includeCoAuthoredBy": true
+}
