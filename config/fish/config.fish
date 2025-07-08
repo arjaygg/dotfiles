@@ -55,12 +55,9 @@ alias grep='grep --color=auto'
 alias home='cd ~'
 alias myip='curl -s ifconfig.me'
 
-# Git aliases
-alias gs='git status'
-alias ga='git add'
-alias gc='git commit'
-alias gp='git push'
-alias gl='git log --oneline'
+# Git abbreviations - handled by jhillyerd/plugin-git Fisher plugin (168 abbreviations)
+# fish-abbreviation-tips will show you suggestions as you type!
+# Native fish commands: abbr --show, alias, functions
 
 # Source shared shell configurations (if they exist)
 if test -f "$HOME/git/dotfiles/config/shell/exports.fish"
