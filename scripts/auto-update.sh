@@ -77,6 +77,9 @@ update_nodejs() {
         log_info "Updating Node.js global packages..."
         npm update -g
         log_success "Node.js global packages updated"
+        
+        # Update Claude MCP tools specifically
+        update_claude_mcp_tools
     fi
     
     # Update fnm if installed
@@ -85,6 +88,84 @@ update_nodejs() {
         fnm install --lts
         fnm use lts-latest
         log_success "Node.js LTS updated"
+    fi
+}
+
+# Update MCP tools
+update_claude_mcp_tools() {
+    if ! command -v npm >/dev/null 2>&1; then
+        log_warn "npm not available - skipping MCP tools update"
+        return 0
+    fi
+    
+    log_info "Updating MCP (Model Context Protocol) tools..."
+    
+    # List of MCP tools to update
+    local mcp_tools=(
+        "@anthropic/mcp-markdownify"
+        "@anthropic/mcp-context7"
+        "@anthropic/mcp-office-powerpoint"
+        "@anthropic/mcp-directory-tree"
+        "@anthropic/mcp-video"
+    )
+    
+    local updated_count=0
+    for tool in "${mcp_tools[@]}"; do
+        if npm list -g "$tool" >/dev/null 2>&1; then
+            if npm update -g "$tool" >/dev/null 2>&1; then
+                log_info "  ✓ Updated $tool"
+                ((updated_count++))
+            else
+                log_warn "  ⚠ Failed to update $tool"
+            fi
+        else
+            log_info "  → Installing missing MCP tool: $tool"
+            if npm install -g "$tool" >/dev/null 2>&1; then
+                log_info "  ✓ Installed $tool"
+                ((updated_count++))
+            else
+                log_warn "  ⚠ Failed to install $tool"
+            fi
+        fi
+    done
+    
+    if [[ $updated_count -gt 0 ]]; then
+        log_success "Updated $updated_count MCP tools"
+        
+        # Sync configuration if needed
+        mkdir -p "$HOME/.config/claude" "$HOME/.config/mcp"
+        
+        # Sync generic MCP config
+        if [[ -f "$DOTFILES_ROOT/config/mcp/servers.json" ]]; then
+            if [[ ! -L "$HOME/.config/mcp/servers.json" ]] || [[ "$(readlink "$HOME/.config/mcp/servers.json")" != "$DOTFILES_ROOT/config/mcp/servers.json" ]]; then
+                log_info "Syncing generic MCP configuration..."
+                ln -sf "$DOTFILES_ROOT/config/mcp/servers.json" "$HOME/.config/mcp/servers.json"
+                log_success "Generic MCP configuration synced"
+            fi
+        fi
+        
+        # Regenerate Claude CLI config from generic MCP config
+        if [[ -f "$DOTFILES_ROOT/config/mcp/servers.json" ]]; then
+            if command -v node >/dev/null 2>&1; then
+                log_info "Regenerating Claude CLI config from updated MCP servers..."
+                if "$DOTFILES_ROOT/scripts/generate-claude-config.js"; then
+                    log_success "Claude CLI config regenerated"
+                else
+                    log_warn "Failed to regenerate Claude CLI config"
+                fi
+            fi
+        fi
+        
+        # Sync Claude CLI config (includes MCP + Claude settings)
+        if [[ -f "$DOTFILES_ROOT/config/claude/settings.json" ]]; then
+            if [[ ! -L "$HOME/.config/claude/settings.json" ]] || [[ "$(readlink "$HOME/.config/claude/settings.json")" != "$DOTFILES_ROOT/config/claude/settings.json" ]]; then
+                log_info "Syncing Claude CLI configuration (MCP + permissions)..."
+                ln -sf "$DOTFILES_ROOT/config/claude/settings.json" "$HOME/.config/claude/settings.json"
+                log_success "Claude CLI configuration synced"
+            fi
+        fi
+    else
+        log_info "No MCP tools updates needed"
     fi
 }
 

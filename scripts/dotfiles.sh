@@ -50,6 +50,7 @@ show_help() {
     echo -e "    ${GREEN}clean${NC}          Clean up old backups and caches"
     echo -e "    ${GREEN}doctor${NC}         Diagnose and fix common issues"
     echo -e "    ${GREEN}prompt${NC}         Switch Fish shell prompt (tide/hydro/starship)"
+    echo -e "    ${GREEN}mcp${NC}            Manage MCP (Model Context Protocol) tools"
     echo
     echo -e "${BOLD}SYNC OPTIONS:${NC}"
     echo "    --force             Force sync even if no changes"
@@ -60,6 +61,11 @@ show_help() {
     echo "    --skip-system       Skip system package updates"
     echo "    --skip-tools        Skip development tool updates"
     echo
+    echo -e "${BOLD}MCP OPTIONS:${NC}"
+    echo "    status              Show MCP tools and configurations status"
+    echo "    regenerate          Regenerate Claude CLI config from MCP servers"
+    echo "    setup               Run full MCP setup (rarely needed)"
+    echo
     echo -e "${BOLD}EXAMPLES:${NC}"
     echo "    dotfiles sync                    # Sync configurations"
     echo "    dotfiles update --skip-system    # Update tools only"
@@ -68,6 +74,8 @@ show_help() {
     echo "    dotfiles schedule daily          # Setup daily auto-updates"
     echo "    dotfiles prompt tide             # Switch to Tide prompt"
     echo "    dotfiles prompt hydro            # Switch to Hydro prompt"
+    echo "    dotfiles mcp status              # Show MCP tools status"
+    echo "    dotfiles mcp regenerate          # Regenerate Claude config from MCP"
     echo
     echo -e "${BOLD}FILES:${NC}"
     echo "    Logs: ~/.dotfiles-update.log"
@@ -126,6 +134,39 @@ show_status() {
             echo "   ❌ $tool (not installed)"
         fi
     done
+    echo
+    
+    # MCP status
+    echo "🤖 MCP (Model Context Protocol):"
+    if [[ -f "$HOME/.config/claude/settings.json" ]]; then
+        echo "   ✅ Configuration exists"
+        
+        # Check MCP tools
+        local mcp_tools=("@anthropic/mcp-markdownify" "@anthropic/mcp-context7" "@anthropic/mcp-office-powerpoint" "@anthropic/mcp-directory-tree" "@anthropic/mcp-video")
+        local installed_count=0
+        for tool in "${mcp_tools[@]}"; do
+            if command -v npm >/dev/null 2>&1 && npm list -g "$tool" >/dev/null 2>&1; then
+                ((installed_count++))
+            fi
+        done
+        echo "   ✅ $installed_count/5 MCP tools installed"
+        
+        # Show compatible clients
+        local clients_found=0
+        if command -v claude >/dev/null 2>&1; then
+            echo "   ✅ Claude CLI available"
+            ((clients_found++))
+        fi
+        # Could add checks for other MCP clients here in the future
+        
+        if [[ $clients_found -eq 0 ]]; then
+            echo "   ⚠️  No MCP-compatible clients found"
+            echo "      Install Claude CLI, Cline, or Continue.dev"
+        fi
+    else
+        echo "   ❌ No MCP configuration found"
+        echo "      Run 'dotfiles install' or '~/git/dotfiles/scripts/setup-claude-mcp.sh'"
+    fi
     echo
     
     # Backup status
@@ -338,6 +379,75 @@ switch_fish_prompt() {
     esac
 }
 
+# MCP tools management
+manage_mcp() {
+    local action="${1:-status}"
+    
+    case "$action" in
+        status)
+            log_header "🤖 MCP Tools Status"
+            if [[ -f "$HOME/.config/mcp/servers.json" ]]; then
+                echo "✅ Generic MCP configuration exists"
+                local mcp_count=$(jq '.mcpServers | length' "$HOME/.config/mcp/servers.json" 2>/dev/null || echo "0")
+                echo "   📦 $mcp_count MCP servers configured"
+            else
+                echo "❌ No MCP configuration found"
+            fi
+            
+            if [[ -f "$HOME/.config/claude/settings.json" ]]; then
+                echo "✅ Claude CLI configuration exists"
+                if [[ -L "$HOME/.config/claude/settings.json" ]]; then
+                    echo "   🔗 Linked to: $(readlink "$HOME/.config/claude/settings.json")"
+                fi
+            else
+                echo "❌ No Claude CLI configuration found"
+            fi
+            
+            echo
+            echo "🛠️  Available commands:"
+            echo "   dotfiles mcp regenerate  - Regenerate Claude config from MCP servers"
+            echo "   dotfiles mcp status      - Show this status"
+            echo
+            echo "📝 To add new MCP tools:"
+            echo "   1. Edit: ~/git/dotfiles/config/mcp/servers.json"
+            echo "   2. Run: dotfiles mcp regenerate"
+            echo "   3. Install: npm install -g @anthropic/mcp-<tool-name>"
+            ;;
+        regenerate)
+            log_header "🔄 Regenerating Claude CLI Configuration"
+            if [[ -f "$SCRIPT_DIR/generate-claude-config.js" ]]; then
+                if command -v node >/dev/null 2>&1; then
+                    if "$SCRIPT_DIR/generate-claude-config.js"; then
+                        log_success "Claude CLI config regenerated successfully"
+                        log_info "Configuration updated from generic MCP servers"
+                    else
+                        log_error "Failed to regenerate Claude CLI config"
+                        return 1
+                    fi
+                else
+                    log_error "Node.js not found. Install Node.js to regenerate config."
+                    return 1
+                fi
+            else
+                log_error "Generator script not found: $SCRIPT_DIR/generate-claude-config.js"
+                return 1
+            fi
+            ;;
+        setup)
+            log_header "🚀 Setting up MCP Tools"
+            "$SCRIPT_DIR/setup-claude-mcp.sh"
+            ;;
+        *)
+            log_error "Invalid MCP action. Use: status, regenerate, or setup"
+            echo "Available commands:"
+            echo "  dotfiles mcp status      - Show MCP tools status"
+            echo "  dotfiles mcp regenerate  - Regenerate Claude config"
+            echo "  dotfiles mcp setup       - Run full MCP setup"
+            return 1
+            ;;
+    esac
+}
+
 # Backup management
 manage_backups() {
     local action="${1:-list}"
@@ -421,6 +531,9 @@ main() {
             ;;
         prompt)
             switch_fish_prompt "${1:-}"
+            ;;
+        mcp)
+            manage_mcp "${1:-status}"
             ;;
         help|--help|-h)
             show_help

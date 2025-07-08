@@ -23,6 +23,7 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 install_claude_cli() {
     if command -v claude >/dev/null 2>&1; then
         log_info "Claude CLI already installed"
+        setup_claude_mcp
         return 0
     fi
 
@@ -31,6 +32,7 @@ install_claude_cli() {
     # Try official installer first
     if curl -fsSL https://claude.ai/cli/install.sh | sh; then
         log_success "Claude CLI installed via official installer"
+        setup_claude_mcp
         return 0
     fi
     
@@ -39,6 +41,7 @@ install_claude_cli() {
         log_warn "Official installer failed, trying npm installation..."
         if npm install -g @anthropic-ai/claude-code 2>/dev/null; then
             log_success "Claude CLI installed via npm"
+            setup_claude_mcp
             return 0
         fi
     fi
@@ -67,6 +70,124 @@ install_claude_cli() {
     
     log_warn "Could not install Claude CLI automatically. Please install manually:"
     log_warn "npm install -g @anthropic-ai/claude-code"
+}
+
+# Setup Claude MCP tools
+setup_claude_mcp() {
+    log_info "Setting up MCP (Model Context Protocol) tools..."
+    
+    # Check if npm is available
+    if ! command -v npm >/dev/null 2>&1; then
+        log_warn "npm not found. MCP tools require npm. Install Node.js first."
+        return 1
+    fi
+    
+    # Install global MCP packages from configuration
+    log_info "Installing global MCP packages..."
+    if [[ -f "$DOTFILES_ROOT/config/mcp/servers.json" ]]; then
+        # Extract package names from MCP config
+        if command -v jq >/dev/null 2>&1; then
+            # Extract package names from MCP config using simpler approach
+            local mcp_packages=$(jq -r '.mcpServers[].args[0]' "$DOTFILES_ROOT/config/mcp/servers.json" 2>/dev/null)
+            if [[ -n "$mcp_packages" ]]; then
+                while IFS= read -r package; do
+                    if [[ -n "$package" && "$package" =~ ^@anthropic/mcp- ]]; then
+                        log_info "Installing MCP package: $package"
+                        npm install -g "$package" 2>/dev/null || log_warn "Failed to install $package"
+                    fi
+                done <<< "$mcp_packages"
+            else
+                log_warn "No MCP packages found in configuration"
+            fi
+        else
+            log_warn "jq not available, installing default MCP packages..."
+            # Fallback to hardcoded list
+            npm install -g @anthropic/mcp-markdownify 2>/dev/null || log_warn "Failed to install mcp-markdownify"
+            npm install -g @anthropic/mcp-context7 2>/dev/null || log_warn "Failed to install mcp-context7"
+            npm install -g @anthropic/mcp-office-powerpoint 2>/dev/null || log_warn "Failed to install mcp-office-powerpoint"
+            npm install -g @anthropic/mcp-directory-tree 2>/dev/null || log_warn "Failed to install mcp-directory-tree"
+            npm install -g @anthropic/mcp-video 2>/dev/null || log_warn "Failed to install mcp-video"
+        fi
+    else
+        log_warn "MCP configuration not found, skipping package installation"
+    fi
+    
+    # Create MCP config directories
+    mkdir -p "$HOME/.config/claude" "$HOME/.config/mcp"
+    
+    # Setup generic MCP configuration
+    if [[ -f "$DOTFILES_ROOT/config/mcp/servers.json" ]]; then
+        log_info "Linking generic MCP servers configuration..."
+        ln -sf "$DOTFILES_ROOT/config/mcp/servers.json" "$HOME/.config/mcp/servers.json"
+        log_success "✓ Generic MCP configuration linked"
+    fi
+    
+    # Generate Claude CLI configuration from generic MCP config
+    if [[ -f "$DOTFILES_ROOT/config/mcp/servers.json" ]]; then
+        log_info "Generating Claude CLI config from generic MCP servers..."
+        if command -v node >/dev/null 2>&1; then
+            if "$DOTFILES_ROOT/scripts/generate-claude-config.js"; then
+                log_success "✓ Claude CLI config generated from generic MCP config"
+            else
+                log_warn "Failed to generate Claude CLI config, using fallback"
+            fi
+        else
+            log_warn "Node.js not found, using manual config generation"
+        fi
+    fi
+
+    # Setup Claude CLI configuration (generated or fallback)
+    if [[ -f "$DOTFILES_ROOT/config/claude/settings.json" ]]; then
+        log_info "Linking Claude CLI settings (includes MCP + permissions)..."
+        ln -sf "$DOTFILES_ROOT/config/claude/settings.json" "$HOME/.config/claude/settings.json"
+        log_success "✓ Claude CLI settings linked (generated from MCP config)"
+    else
+        log_warn "Claude CLI settings not found in dotfiles. Creating basic configuration..."
+        cat > "$HOME/.config/claude/settings.json" << 'EOF'
+{
+  "mcpServers": {
+    "markdownify": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-markdownify"],
+      "description": "Convert various file formats to markdown"
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-context7"],
+      "description": "Access library documentation and code examples"
+    },
+    "office-powerpoint": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-office-powerpoint"],
+      "description": "Create and edit PowerPoint presentations"
+    },
+    "directory-tree": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-directory-tree"],
+      "description": "Generate directory tree structures"
+    },
+    "video": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-video"],
+      "description": "Video processing, transcription, and analysis"
+    }
+  },
+  "permissions": {
+    "allow": ["*"],
+    "deny": []
+  },
+  "env": {
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1"
+  },
+  "cleanupPeriodDays": 30,
+  "includeCoAuthoredBy": true
+}
+EOF
+        log_success "✓ Basic Claude CLI configuration created (includes MCP + permissions)"
+    fi
+    
+    log_success "✓ MCP tools setup complete"
+    log_info "MCP tools work with Claude CLI, Cline, Continue.dev, and other MCP-compatible AI assistants"
 }
 
 # Package lists

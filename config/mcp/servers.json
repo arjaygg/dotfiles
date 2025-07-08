@@ -1,0 +1,34 @@
+{
+  "mcpServers": {
+    "markdownify": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-markdownify"],
+      "description": "Convert various file formats to markdown"
+    },
+    "context7": {
+      "command": "npx", 
+      "args": ["@anthropic/mcp-context7"],
+      "description": "Access library documentation and code examples"
+    },
+    "office-powerpoint": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-office-powerpoint"],
+      "description": "Create and edit PowerPoint presentations"
+    },
+    "directory-tree": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-directory-tree"],
+      "description": "Generate directory tree structures"
+    },
+    "video": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-video"],
+      "description": "Video processing, transcription, and analysis"
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["@anthropic/mcp-filesystem"],
+      "description": "File system operations with controlled access"
+    }
+  }
+}
