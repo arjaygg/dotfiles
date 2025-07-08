@@ -60,11 +60,6 @@ if command -v zoxide >/dev/null 2>&1; then
     eval "$(zoxide init bash)"
 fi
 
-# Initialize atuin if available
-if command -v atuin >/dev/null 2>&1; then
-    eval "$(atuin init bash)"
-fi
-
 # Initialize broot if available
 if command -v broot >/dev/null 2>&1; then
     source ~/.config/broot/launcher/bash/br 2>/dev/null || true
@@ -83,6 +78,11 @@ if command -v fzf >/dev/null 2>&1; then
     if [[ -f /usr/share/fzf/completion.bash ]]; then
         source /usr/share/fzf/completion.bash
     fi
+fi
+
+# Initialize atuin if available (after FZF to override Ctrl-R)
+if command -v atuin >/dev/null 2>&1; then
+    eval "$(atuin init bash)"
 fi
 
 # Bash-specific functions
