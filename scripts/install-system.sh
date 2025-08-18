@@ -224,6 +224,7 @@ MODERN_CLI_PACKAGES=(
     "atuin"
     "broot"
     "zoxide"
+    "direnv"
     "dust"
     "procs"
     "hyperfine"
@@ -529,6 +530,11 @@ install_with_apt() {
         fi
     fi
     
+    # direnv
+    if ! command -v direnv >/dev/null 2>&1; then
+        sudo apt install -y direnv
+    fi
+    
     # Optional packages (repositories already set up in setup_modern_repositories)
     log_info "Installing optional packages..."
     sudo apt install -y neovim zsh htop tree jq
@@ -579,7 +585,7 @@ install_with_pacman() {
     
     # Modern CLI tools
     log_info "Installing modern CLI tools..."
-    sudo pacman -S --noconfirm bat eza fd ripgrep fzf starship git-delta github-cli lazygit atuin
+    sudo pacman -S --noconfirm bat eza fd ripgrep fzf starship git-delta github-cli lazygit atuin direnv
     
     # Optional packages
     log_info "Installing optional packages..."
