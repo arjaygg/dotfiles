@@ -1,46 +1,44 @@
 {
   "mcpServers": {
-    "markdownify": {
-      "command": "npx",
-      "args": [
-        "@anthropic/mcp-markdownify"
-      ],
-      "description": "Convert various file formats to markdown"
-    },
     "context7": {
       "command": "npx",
       "args": [
-        "@anthropic/mcp-context7"
+        "-y",
+        "@upstash/context7-mcp"
       ],
       "description": "Access library documentation and code examples"
-    },
-    "office-powerpoint": {
-      "command": "npx",
-      "args": [
-        "@anthropic/mcp-office-powerpoint"
-      ],
-      "description": "Create and edit PowerPoint presentations"
-    },
-    "directory-tree": {
-      "command": "npx",
-      "args": [
-        "@anthropic/mcp-directory-tree"
-      ],
-      "description": "Generate directory tree structures"
-    },
-    "video": {
-      "command": "npx",
-      "args": [
-        "@anthropic/mcp-video"
-      ],
-      "description": "Video processing, transcription, and analysis"
     },
     "filesystem": {
       "command": "npx",
       "args": [
-        "@anthropic/mcp-filesystem"
+        "-y",
+        "@modelcontextprotocol/server-filesystem"
       ],
       "description": "File system operations with controlled access"
+    },
+    "git": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-git"
+      ],
+      "description": "Git repository operations and history"
+    },
+    "memory": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "description": "Knowledge graph and memory management"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "description": "Sequential thinking and problem solving"
     }
   },
   "permissions": {

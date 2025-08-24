@@ -1,9 +1,9 @@
 # Bash configuration for dotfiles (fallback shell)
 # This provides a minimal but functional Bash environment when Fish is not available
 
-# Fix locale to prevent warnings - use available C.utf8 locale
-export LANG=C.utf8
-export LC_ALL=C.utf8
+# Fix locale to prevent warnings - use standard en_US.UTF-8 locale
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 unset LANGUAGE
 
 # Source shared shell configurations

@@ -1,6 +1,11 @@
 jorgebucaran/fisher
-jhillyerd/plugin-git
-budimanjojo/tmux.fish
 ilancosman/tide@v6
-jethrokuan/z
+jhillyerd/plugin-git
+gazorby/fish-abbreviation-tips
 patrickf1/fzf.fish
+jethrokuan/z
+budimanjojo/tmux.fish
+barnybug/docker-fish-completion
+derphilipp/enter-docker-fzf
+dteoh/fish-homebrew-asdf
+jorgebucaran/nvm.fish

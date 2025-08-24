@@ -20,9 +20,9 @@ export HISTIGNORE="ls:cd:cd -:pwd:exit:date:* --help"
 export CLICOLOR=1
 export LSCOLORS=ExGxBxDxCxEgEdxbxgxcxd
 
-# Language and locale - use C.utf8 (available locale)
-export LANG=C.utf8
-export LC_ALL=C.utf8
+# Language and locale - use en_US.UTF-8 (standard locale)
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
 unset LANGUAGE
 
 # Development paths and configurations
@@ -33,7 +33,8 @@ export RUSTUP_HOME="$HOME/.rustup"
 
 # Node.js
 export NODE_ENV=development
-export NPM_CONFIG_PREFIX="$HOME/.npm-global"
+# NPM_CONFIG_PREFIX conflicts with nvm - commented out for nvm compatibility
+# export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 
 # Python
 export PYTHONDONTWRITEBYTECODE=1
@@ -51,7 +52,7 @@ add_to_path "$HOME/.local/bin"
 add_to_path "$HOME/bin"
 add_to_path "$GOBIN"
 add_to_path "$CARGO_HOME/bin"
-add_to_path "$NPM_CONFIG_PREFIX/bin"
+# add_to_path "$NPM_CONFIG_PREFIX/bin"  # Disabled for nvm compatibility
 add_to_path "$HOME/.yarn/bin"
 
 # Platform-specific exports

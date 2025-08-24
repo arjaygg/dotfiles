@@ -55,9 +55,9 @@ alias grep='grep --color=auto'
 alias home='cd ~'
 alias myip='curl -s ifconfig.me'
 
-# Git abbreviations - handled by jhillyerd/plugin-git Fisher plugin (168 abbreviations)
-# fish-abbreviation-tips will show you suggestions as you type!
-# Native fish commands: abbr --show, alias, functions
+# Git abbreviations are automatically loaded by jhillyerd/plugin-git
+# Use fish-abbreviation-tips to see suggestions as you type
+# Commands: abbr --show, alias, functions
 
 # Source shared shell configurations (if they exist)
 if test -f "$HOME/git/dotfiles/config/shell/exports.fish"
@@ -85,22 +85,30 @@ end
 if command -v fzf >/dev/null 2>&1
     # Set FZF environment variables
     set -gx FZF_DEFAULT_OPTS '--height 40% --layout=reverse --border'
-    
-    # Manual key bindings that actually work
-    bind \ct '_fzf_search_directory'
-    bind \cr '_fzf_search_history'
-    bind \cs '_fzf_search_git_status'
-    bind \cg '_fzf_search_git_log'
-    bind \cp '_fzf_search_processes'
-    bind \cv '_fzf_search_variables'
 end
 
 # Fisher plugins installed:
-# - IlanCosman/tide@v6      # Modern, fast prompt
-# - PatrickF1/fzf.fish      # Fuzzy finder integration
-# - jethrokuan/z            # Directory jumping
+# - IlanCosman/tide@v6                    # Modern, fast prompt
+# - jhillyerd/plugin-git                  # Git abbreviations (168 total)
+# - gazorby/fish-abbreviation-tips        # Shows abbreviation suggestions
+# - PatrickF1/fzf.fish                    # Fuzzy finder integration
+# - jethrokuan/z                          # Directory jumping
+# - budimanjojo/tmux.fish                 # Tmux integration  
+# - barnybug/docker-fish-completion       # Docker completions
+# - derphilipp/enter-docker-fzf           # Docker container selector
+# - dteoh/fish-homebrew-asdf              # Homebrew + asdf integration
+# - jorgebucaran/nvm.fish                 # Node version manager
 
 # Additional tools integrated:
 # - atuin                   # Enhanced shell history with sync
 # - zoxide                  # Smarter cd command
 # - direnv                  # Directory-specific environment variables
+# OpenCode integration (if available)
+if test -d "$HOME/.opencode"
+    fish_add_path -g "$HOME/.opencode/bin"
+end
+
+# Initialize Homebrew environment if available
+if command -v brew >/dev/null 2>&1
+    eval (brew shellenv)
+end

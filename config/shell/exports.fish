@@ -19,9 +19,9 @@ set -gx HISTFILESIZE 20000
 set -gx CLICOLOR 1
 set -gx LSCOLORS ExGxBxDxCxEgEdxbxgxcxd
 
-# Language and locale - use C.utf8 (available locale)
-set -gx LANG C.utf8
-set -gx LC_ALL C.utf8
+# Language and locale - use en_US.UTF-8 (standard locale)
+set -gx LANG en_US.UTF-8
+set -gx LC_ALL en_US.UTF-8
 set -e LANGUAGE
 
 # Development paths and configurations
@@ -32,7 +32,8 @@ set -gx RUSTUP_HOME "$HOME/.rustup"
 
 # Node.js
 set -gx NODE_ENV development
-set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
+# NPM_CONFIG_PREFIX conflicts with nvm - commented out for nvm compatibility
+# set -gx NPM_CONFIG_PREFIX "$HOME/.npm-global"
 
 # Python
 set -gx PYTHONDONTWRITEBYTECODE 1
@@ -50,7 +51,7 @@ add_to_path_if_exists "$HOME/.local/bin"
 add_to_path_if_exists "$HOME/bin"
 add_to_path_if_exists "$GOBIN"
 add_to_path_if_exists "$CARGO_HOME/bin"
-add_to_path_if_exists "$NPM_CONFIG_PREFIX/bin"
+# add_to_path_if_exists "$NPM_CONFIG_PREFIX/bin"  # Disabled for nvm compatibility
 add_to_path_if_exists "$HOME/.yarn/bin"
 
 # Platform-specific exports
