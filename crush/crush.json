@@ -1,0 +1,133 @@
+{
+  "$schema": "https://charm.land/crush.json",
+  "lsp": {
+    "Python": {
+      "command": "pylsp",
+      "filetypes": [
+        "py"
+      ]
+    },
+    "Go": {
+      "command": "gopls",
+      "filetypes": [
+        "go",
+        "mod",
+        "sum",
+        "work"
+      ]
+    },
+    "TypeScript": {
+      "command": "typescript-language-server",
+      "args": [
+        "--stdio"
+      ],
+      "filetypes": [
+        "ts",
+        "tsx",
+        "js",
+        "jsx",
+        "mjs",
+        "cjs"
+      ]
+    },
+    "HTML": {
+      "command": "vscode-html-languageserver",
+      "args": [
+        "--stdio"
+      ],
+      "filetypes": [
+        "html",
+        "htm"
+      ]
+    },
+    "CSS": {
+      "command": "vscode-css-languageserver",
+      "args": [
+        "--stdio"
+      ],
+      "filetypes": [
+        "css",
+        "scss",
+        "sass",
+        "less"
+      ]
+    },
+    "Markdown": {
+      "command": "vscode-markdown-languageserver",
+      "args": [
+        "--stdio"
+      ],
+      "filetypes": [
+        "md",
+        "markdown"
+      ]
+    },
+    "Bash": {
+      "command": "bash-language-server",
+      "args": [
+        "start"
+      ],
+      "filetypes": [
+        "sh",
+        "bash",
+        "zsh",
+        "ksh"
+      ]
+    }
+  },
+  "mcp": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "timeout": 30,
+      "headers": {
+        "Authorization": "$(echo Bearer $GITHUB_TOKEN)"
+      }
+    },
+    "context7": {
+      "type": "sse",
+      "url": "https://mcp.context7.com/sse"
+    },
+    "goreleaser": {
+      "type": "stdio",
+      "command": "goreleaser",
+      "args": [
+        "mcp"
+      ]
+    }
+  },
+  "permissions": {
+    "allowed_tools": [
+      "mcp_github_get_issue",
+      "mcp_github_get_issue_comments",
+      "multiedit",
+      "view",
+      "ls",
+      "grep",
+      "fetch",
+      "write",
+      "edit"
+    ]
+  },
+  "providers": {
+    "ollama": {
+      "type": "openai",
+      "base_url": "http://localhost:11434/v1",
+      "models": [
+        {
+          "id": "qwen3:8b",
+          "name": "qwen3:8b",
+          "cost_per_1m_in": 0,
+          "cost_per_1m_out": 0,
+          "cost_per_1m_in_cached": 0,
+          "cost_per_1m_out_cached": 0,
+          "supports_attachments": false,
+          "can_reason": false,
+          "has_reasoning_efforts": false,
+          "default_max_tokens": 4000,
+          "context_window": 40960
+        }
+      ]
+    }
+  }
+}

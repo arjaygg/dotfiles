@@ -16,5 +16,6 @@ and if not __find
 	# this fixes cases in which, somehow, the remotes/origin/main file disappeared.
 	# fetch will create it again, and the find will then work again
 	git fetch --prune origin >/dev/null 2>&1
+	git update-ref -d refs/remotes/origin/HEAD >/dev/null 2>&1
 	__find
 end
