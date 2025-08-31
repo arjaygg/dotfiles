@@ -39,6 +39,27 @@
         "@modelcontextprotocol/server-sequential-thinking"
       ],
       "description": "Sequential thinking and problem solving"
+    },
+    "directory-tree": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@andredezzy/deep-directory-tree-mcp"
+      ],
+      "description": "Generate visual directory structures"
+    },
+    "mcp-video": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@felores/mcp-video"
+      ],
+      "description": "Video processing and transcript extraction"
+    },
+    "markitdown": {
+      "command": "markitdown-mcp",
+      "args": [],
+      "description": "Convert documents and web pages to markdown"
     }
   },
   "permissions": {

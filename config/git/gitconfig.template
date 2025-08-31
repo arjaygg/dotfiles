@@ -2,3 +2,6 @@
 	helper = 
 [credential "https://github.com"]
 	helper = !gh auth git-credential
+[user]
+	email = agdevpro@gmail.com
+	name = arjaygg
