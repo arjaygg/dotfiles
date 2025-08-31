@@ -3,4 +3,4 @@ dist
 .claude/
 claude_hook_monitor.log
 *.log
-.DS_Store
+.DS_Store*.swp
