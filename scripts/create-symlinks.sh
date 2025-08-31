@@ -28,6 +28,7 @@ SYMLINK_MAP["system/alacritty/alacritty.yml"]="$HOME/.config/alacritty/alacritty
 SYMLINK_MAP["system/i3/i3config"]="$HOME/.config/i3/config"
 SYMLINK_MAP["config/shell/aliases.sh"]="$HOME/.aliases"
 SYMLINK_MAP["config/shell/exports.sh"]="$HOME/.exports"
+SYMLINK_MAP["ghostty/config"]="$HOME/.config/ghostty/config"
 
 # Create symlink
 create_symlink() {
