@@ -7,7 +7,7 @@ local options = {
   inccommand = "split",
   splitbelow = true,
   splitright = true,
-  wrap = false,
+  wrap = true,
   textwidth = 0,
   expandtab = true,
   smartindent = true,
@@ -64,3 +64,31 @@ iabbrev descriptoin description
 iabbrev fucn func
 iabbrev sicne since
 ]])
+
+-- Better text viewing options
+vim.opt.linebreak = true        -- Break lines at word boundaries
+vim.opt.breakindent = true      -- Indent wrapped lines
+vim.opt.showbreak = "↳ "        -- Show break indicator
+vim.opt.conceallevel = 0        -- Don't conceal markdown syntax
+vim.opt.concealcursor = ""      -- Don't conceal in any mode
+
+-- Filetype-specific settings
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "text", "gitcommit" },
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+    vim.opt_local.textwidth = 0
+    vim.opt_local.spell = true
+    vim.opt_local.spelllang = "en_us"
+  end,
+})
+
+-- Auto-wrap for long lines in text files
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "text", "gitcommit", "help" },
+  callback = function()
+    vim.opt_local.wrap = true
+    vim.opt_local.linebreak = true
+  end,
+})
