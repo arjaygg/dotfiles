@@ -22,11 +22,25 @@ return {
     end,
   },
   {
+  {
     "akinsho/bufferline.nvim",
     dependencies = {
       "nvim-tree/nvim-web-devicons",
       "catppuccin/nvim",
     },
+    config = function()
+      require("bufferline").setup({
+        options = {
+          diagnostics = "nvim_lsp",
+          separator_style = "thin",
+          always_show_bufferline = false,
+          show_buffer_close_icons = false,
+          show_close_icon = false,
+          color_icons = true,
+        },
+      })
+    end,
+  },
     config = {
       options = {
         diagnostics = "nvim_lsp",
