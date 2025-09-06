@@ -22,7 +22,7 @@ inlay_hints.setup({
 
 require("mason").setup()
 require("mason-lspconfig").setup({
-  automatic_installation = true,
+  automatic_installation = false,
 })
 
 -- Use an on_attach function to only map the following keys

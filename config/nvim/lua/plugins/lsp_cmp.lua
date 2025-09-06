@@ -9,7 +9,7 @@ return {
   },
   {
     "williamboman/mason.nvim",
-    event = "BufEnter",
+    event = "VeryLazy",
     dependencies = {
       -- lsp
       "williamboman/mason-lspconfig.nvim",
