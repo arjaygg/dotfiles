@@ -4,6 +4,15 @@
 # Disable greeting message
 set -g fish_greeting ""
 
+# Auto-detect correct TERM based on actual terminal
+if test "$TERM" = "xterm-ghostty"; and test "$TERM_PROGRAM" != "ghostty"
+    if test -n "$TMUX"
+        set -gx TERM screen-256color
+    else
+        set -gx TERM xterm-256color
+    end
+end
+
 # Basic environment variables
 set -gx EDITOR nvim
 set -gx VISUAL $EDITOR
