@@ -132,7 +132,7 @@ keymap("n", "<leader>cc", ":cclose<CR>", opts)
 
 -- write, buffer killing
 keymap("n", "<leader>q", ":Bdelete<CR>", opts)
-keymap("n", "<leader>bad", ":%Bwipeout!<cr>:intro<cr>", opts)
+keymap("n", "<leader>bad", ":%bwipeout!<cr>:intro<cr>", opts)
 keymap("n", "<leader>w", ":write<CR>", opts)
 
 -- zz
@@ -617,8 +617,15 @@ treesj.setup({ use_default_keymaps = false })
 keymap("n", "<leader>st", treesj.toggle, opts)
 
 require("fzf-lua").setup({
-  fzf_opts = { ["--cycle"] = true },
-  winopts = { split = "botright new" },
+  fzf_opts = {
+    ["--cycle"] = true,
+  },
+  winopts = {
+    split = "botright new",
+    treesitter = {
+      enabled = false,
+    },
+  },
 })
 keymap("n", "<C-p>", ":FzfLua global<CR>", opts)
 keymap("n", "<leader>of", ":FzfLua oldfiles cwd_only=true<CR>", opts)
